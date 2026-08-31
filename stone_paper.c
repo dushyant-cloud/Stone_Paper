@@ -4,68 +4,115 @@
 
 int main() {
     int player, computer;
-    int playerScore = 0, computerScore = 0;
-    int rounds;
+    int playerScore, computerScore;
+    int mode;
+    char again;
 
     srand(time(NULL));
 
-    printf("==== STONE PAPER SCISSORS ====\n");
+    do {
+        playerScore = 0;
+        computerScore = 0;
 
-    printf("Enter num of rounds :- ");
-    scanf("%d", &rounds);
+        printf("\n=================================\n");
+        printf("     STONE PAPER SCISSORS\n");
+        printf("=================================\n");
 
-    for (int i = 1; i <= rounds; i++) {
+        printf("\nChoose Game Mode:\n");
+        printf("1. Best of 3\n");
+        printf("2. Best of 5\n");
+        printf("Enter your choice: ");
+        scanf("%d", &mode);
 
-        printf("\n--- Round %d --\n", i);
+        int winningScore;
 
-        printf("1. Stone\n");
-        printf("2. Paper\n");
-        printf("3. Scissors\n");
-
-        printf("Enter your choice (1-3): ");
-        scanf("%d", &player);
-
-        if (player < 1 || player > 3 ) {
-            printf("Invalid choice! Try again. \n");
-            i--;
-            continue;
+        if (mode == 1) {
+            winningScore = 2;
+            printf("\n===== BEST OF 3 =====\n");
+        }
+        else if (mode == 2) {
+            winningScore = 3;
+            printf("\n===== BEST OF 5 =====\n");
+        }
+        else {
+            printf("Invalid choice! Starting Best of 3.\n");
+            winningScore = 2;
+            printf("\n===== BEST OF 3 =====\n");
         }
 
-        computer = (rand() % 3) + 1;
+        while (playerScore < winningScore &&
+               computerScore < winningScore) {
 
-        printf("Computer chose: ");
+            printf("\nChoose your option:\n");
+            printf("1. Stone\n");
+            printf("2. Paper\n");
+            printf("3. Scissors\n");
 
-        if (computer == 1)
-            printf("Stone\n");
-        else if (computer == 2)
-            printf("Paper\n");
+            printf("Enter your choice: ");
+            scanf("%d", &player);
+
+            if (player < 1 || player > 3) {
+                printf("Invalid choice! Try again.\n");
+                continue;
+            }
+
+            computer = (rand() % 3) + 1;
+
+            printf("\nYou chose: ");
+
+            if (player == 1)
+                printf("Stone\n");
+            else if (player == 2)
+                printf("Paper\n");
+            else
+                printf("Scissors\n");
+
+            printf("Computer chose: ");
+
+            if (computer == 1)
+                printf("Stone\n");
+            else if (computer == 2)
+                printf("Paper\n");
+            else
+                printf("Scissors\n");
+
+            if (player == computer) {
+                printf("Result: DRAW!\n");
+            }
+            else if ((player == 1 && computer == 3) ||
+                     (player == 2 && computer == 1) ||
+                     (player == 3 && computer == 2)) {
+
+                printf("Result: YOU WIN!\n");
+                playerScore++;
+            }
+            else {
+                printf("Result: COMPUTER WINS!\n");
+                computerScore++;
+            }
+
+            printf("\nScore -> You: %d | Computer: %d\n",
+                   playerScore, computerScore);
+        }
+
+        printf("\n=================================\n");
+        printf("          MATCH RESULT\n");
+        printf("=================================\n");
+
+        printf("You: %d\n", playerScore);
+        printf("Computer: %d\n", computerScore);
+
+        if (playerScore > computerScore)
+            printf("\n🎉 YOU WIN THE MATCH!\n");
         else
-            printf("Scissors\n");
+            printf("\n💻 COMPUTER WINS THE MATCH!\n");
 
-        if (player == computer) {
-            printf("Result: DRAW!!\n");
-    }
-    else if ((player == 1 && computer == 3) || (player == 2 && computer == 1) || (player == 3 && computer == 2)) {
+        printf("\nPlay again? (y/n): ");
+        scanf(" %c", &again);
 
-        printf("Result: YOU WIN!! \n");
-        playerScore++;
-    }
-    else {
-        printf("Result: COMPUTER WINS!! \n");
-        computerScore++;
-    }
-}
+    } while (again == 'y' || again == 'Y');
 
-printf("\n========== FINAL RESULT ==========\n");
-printf("Your Score: %d\n", playerScore);
-printf("Computer Score: %d\n", computerScore);
+    printf("\nThanks for playing! 👋\n");
 
-if (playerScore > computerScore)
-    printf("YOU WINNN!!!!!\n");
-else if (computerScore > playerScore)
-    printf("COMPUTER WINSS!!!!\n");
-else
-printf("IT'S A DRAW!!!!! \n");
-
-return 0;
+    return 0;
 }
