@@ -5,13 +5,17 @@ The player competes against the computer, which makes a random choice each round
 
 ## 🎮 Features
 
-* 🪨 Stone, 📄 Paper, and ✂️ Scissors choices
-* 🤖 Random computer choice
-* 🏆 Winner detection
-* 📊 Score tracking
-* 🔄 Multiple rounds
-* ⚠️ Invalid input handling
-* 🎯 Final match result
+## 🎮 Features
+
+- 🪨 Stone, 📄 Paper, and ✂️ Scissors choices
+- 🤖 Random computer choice
+- 🏆 Winner detection
+- 📊 Score tracking
+- 🔄 Play Again option
+- 🥇 Best of 3 mode
+- 🏆 Best of 5 mode
+- ⚠️ Invalid input handling
+- 🎯 Final match result
 
 ## 🛠️ Technologies Used
 
