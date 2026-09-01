@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 int main() {
     int player, computer;
     int playerScore, computerScore;
     int mode;
     char again;
+    char playerName[50];
+
+    printf("Enter your name: ");
+    fgets(playerName, sizeof(playerName), stdin);
+    playerName[strcspn(playerName, "\n")] = '\0'; // Remove newline character
 
     srand(time(NULL));
 
@@ -99,8 +105,8 @@ int main() {
         printf("          MATCH RESULT\n");
         printf("=================================\n");
 
-        printf("You: %d\n", playerScore);
-        printf("Computer: %d\n", computerScore);
+        printf("\nFinal Score -> You: %d | Computer: %d\n",
+               playerScore, computerScore);
 
         if (playerScore > computerScore)
             printf("\n🎉 YOU WIN THE MATCH!\n");
