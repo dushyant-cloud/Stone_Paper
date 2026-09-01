@@ -14,6 +14,7 @@ The player competes against the computer, which makes a random choice each round
 - 🔄 Play Again option
 - 🥇 Best of 3 mode
 - 🏆 Best of 5 mode
+- 👤 Player name support
 - ⚠️ Invalid input handling
 - 🎯 Final match result
 
