@@ -15,6 +15,7 @@ The player competes against the computer, which makes a random choice each round
 - 🥇 Best of 3 mode
 - 🏆 Best of 5 mode
 - 👤 Player name support
+- 👤 Player Statistics
 - ⚠️ Invalid input handling
 - 🎯 Final match result
 
