@@ -1,0 +1,7 @@
+===========STATISTICS===========
+Plater Name: Debu
+Total Matches Played: 0
+Wins: 1
+Losses: 0
+Draws: 0
+Win Rate: inf%

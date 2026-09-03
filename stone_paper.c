@@ -7,8 +7,12 @@ int main() {
     int player, computer;
     int playerScore, computerScore;
     int mode;
+    int wins = 0, losses = 0, draws = 0;
+    int totalMatches = 0;
+    float winRate;
     char again;
     char playerName[50];
+    FILE * file;
 
     printf("Enter your name: ");
     fgets(playerName, sizeof(playerName), stdin);
@@ -108,17 +112,47 @@ int main() {
         printf("\nFinal Score -> You: %d | Computer: %d\n",
                playerScore, computerScore);
 
-        if (playerScore > computerScore)
-            printf("\n🎉 YOU WIN THE MATCH!\n");
-        else
-            printf("\n💻 COMPUTER WINS THE MATCH!\n");
+        if (playerScore > computerScore) {
+            printf("Congratulations %s! You won the match!\n", playerName);
+            wins++;
+        } else {
+            printf("Better luck next time %s! The computer won.\n", playerName);
+            losses++;
+        }
+        
+        winRate = ((float)wins / totalMatches)*100;
 
-        printf("\nPlay again? (y/n): ");
+        printf("\n===========STATISTICS===========\n");
+        printf("Plater Name: %s\n", playerName);
+        printf("Total Matches Played: %d\n", totalMatches);
+        printf("Wins: %d\n", wins);
+        printf("Losses: %d\n", losses);
+        printf("Draws: %d\n", draws);
+        printf("Win Rate: %.2f%%\n", winRate);
+
+        /*Save the statistics file  */
+        file = fopen("stats.txt", "w");
+
+        if (file == NULL) {
+            printf("\nError: Couldn't save the file.\n");
+        }
+        else {
+            fprintf(file, "===========STATISTICS===========\n");
+            fprintf(file, "Plater Name: %s\n", playerName);
+            fprintf(file, "Total Matches Played: %d\n", totalMatches);
+            fprintf(file, "Wins: %d\n", wins);
+            fprintf(file, "Losses: %d\n", losses);
+            fprintf(file, "Draws: %d\n", draws);
+            fprintf(file, "Win Rate: %.2f%%\n", winRate);
+
+            fclose(file);
+            printf("\nStatistics saved to stats.txt\n");
+        }
+
+        printf("\nDo you want to play again? (y/n): ");
         scanf(" %c", &again);
-
     } while (again == 'y' || again == 'Y');
 
-    printf("\nThanks for playing! 👋\n");
-
-    return 0;
+    printf("\nThank you for playing, %s! Goodbye!\n", playerName);
+    return 0;   
 }
