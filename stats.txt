@@ -1,7 +1,6 @@
-===========STATISTICS===========
-Plater Name: Debu
-Total Matches Played: 0
+STONE PAPER SCISSORS - STATISTICS
+Player: Debu
+Matches: 2
 Wins: 1
-Losses: 0
-Draws: 0
-Win Rate: inf%
+Losses: 1
+Win Rate: 50.00%

@@ -1,0 +1,35 @@
+
+=================================
+Player: Debu
+Mode: Best of 3
+=================================
+Round: You = Scissors | Computer = Stone | Result = LOSS
+Round: You = Scissors | Computer = Paper | Result = WIN
+Round: You = Scissors | Computer = Scissors | Result = DRAW
+Round: You = Scissors | Computer = Scissors | Result = DRAW
+Round: You = Scissors | Computer = Scissors | Result = DRAW
+Round: You = Paper | Computer = Stone | Result = WIN
+FINAL RESULT: Debu WON
+Final Score: Debu 2 - Computer 1
+
+=================================
+Player: Debu
+Mode: Best of 3
+=================================
+Round: You = Stone | Computer = Paper | Result = LOSS
+Round: You = Paper | Computer = Stone | Result = WIN
+Round: You = Paper | Computer = Stone | Result = WIN
+FINAL RESULT: Debu WON
+Final Score: Debu 2 - Computer 1
+
+=================================
+Player: Debu
+Mode: Best of 3
+=================================
+Round: You = Stone | Computer = Paper | Result = LOSS
+Round: You = Stone | Computer = Stone | Result = DRAW
+Round: You = Stone | Computer = Stone | Result = DRAW
+Round: You = Stone | Computer = Scissors | Result = WIN
+Round: You = Stone | Computer = Paper | Result = LOSS
+FINAL RESULT: COMPUTER WON
+Final Score: Debu 1 - Computer 2
