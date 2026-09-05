@@ -1,81 +1,97 @@
 # 🪨📄✂️ Stone Paper Scissors
 
-A simple **Stone Paper Scissors game written in C**.
-The player competes against the computer, which makes a random choice each round.
+A console-based **Stone Paper Scissors game written in C**, where the player competes against the computer in Best of 3 or Best of 5 matches.
+
+The project is designed as a beginner-friendly C programming project and demonstrates concepts such as loops, conditions, functions, random numbers, strings, and file handling.
 
 ## 🎮 Features
 
-## 🎮 Features
-
-- 🪨 Stone, 📄 Paper, and ✂️ Scissors choices
-- 🤖 Random computer choice
-- 🏆 Winner detection
-- 📊 Score tracking
-- 🔄 Play Again option
-- 🥇 Best of 3 mode
-- 🏆 Best of 5 mode
-- 👤 Player name support
-- 👤 Player Statistics
-- ⚠️ Invalid input handling
-- 🎯 Final match result
+* 🪨 Stone, 📄 Paper, and ✂️ Scissors gameplay
+* 👤 Player name support
+* 🤖 Random computer choices
+* 🏆 Automatic winner detection
+* 📊 Score tracking
+* 🔄 Play Again option
+* 🥉 Best of 3 mode
+* 🏆 Best of 5 mode
+* ⚠️ Invalid input handling
+* 📈 Game statistics
+* 🏅 Win rate calculation
+* 💾 Save statistics to `stats.txt`
+* 📜 Game history saved to `game_history.txt`
+* 🎯 Final match result
 
 ## 🛠️ Technologies Used
 
-* **C**
+* **C Programming Language**
+* GCC Compiler
 * Standard C Libraries:
 
   * `stdio.h`
   * `stdlib.h`
   * `time.h`
+  * `string.h`
 
 ## 📂 Project Structure
 
 ```text
-StonePaperScissors/
+stpgame/
 │
 ├── stone_paper.c
-└── README.md
+├── README.md
+├── stats.txt
+└── game_history.txt
 ```
+
+> `stone_paper.exe` is the compiled Windows executable and does not need to be included in the source-code repository.
 
 ## 🚀 How to Run
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone YOUR_REPOSITORY_URL
 ```
 
-### 2. Open the project folder
+### 2. Open the Project Folder
 
 ```bash
-cd StonePaperScissors
+cd stpgame
 ```
 
-### 3. Compile the program
+### 3. Compile the Program
 
 Using GCC:
 
 ```bash
-gcc stone_paper.c -o game
+gcc stone_paper.c -o stone_paper.exe
 ```
 
-### 4. Run the game
+### 4. Run the Game
 
-**Windows:**
+On Windows PowerShell:
 
-```bash
-game.exe
-```
-
-**Linux/macOS:**
-
-```bash
-./game
+```powershell
+.\stone_paper.exe
 ```
 
 ## 🕹️ How to Play
 
-Choose one of the following:
+First enter your name:
+
+```text
+Enter your name: Dushyant
+```
+
+Then select the match format:
+
+```text
+Choose Game Mode:
+1. Best of 3
+2. Best of 5
+```
+
+Choose your move:
 
 ```text
 1. Stone
@@ -83,75 +99,140 @@ Choose one of the following:
 3. Scissors
 ```
 
-The computer will randomly select its choice.
+The computer randomly selects its move.
 
 ### Rules
 
-| Your Choice | Computer Choice | Result           |
-| ----------- | --------------- | ---------------- |
-| Stone       | Scissors        | 🏆 You Win       |
-| Paper       | Stone           | 🏆 You Win       |
-| Scissors    | Paper           | 🏆 You Win       |
-| Same choice | Same choice     | 🤝 Draw          |
-| Otherwise   | —               | 💻 Computer Wins |
+| Player      | Computer    | Result           |
+| ----------- | ----------- | ---------------- |
+| Stone       | Scissors    | 🏆 Player Wins   |
+| Paper       | Stone       | 🏆 Player Wins   |
+| Scissors    | Paper       | 🏆 Player Wins   |
+| Same Choice | Same Choice | 🤝 Draw          |
+| Otherwise   | —           | 💻 Computer Wins |
 
-## 📸 Example
+## 🥇 Game Modes
+
+### Best of 3
+
+The first player to reach **2 round wins** wins the match.
 
 ```text
-===== STONE PAPER SCISSORS =====
+===== BEST OF 3 =====
 
-Enter number of rounds: 3
+Dushyant: 2
+Computer: 1
 
---- Round 1 ---
-1. Stone
-2. Paper
-3. Scissors
-
-Enter your choice: 1
-
-Computer chose: Scissors
-Result: YOU WIN!
-
-===== FINAL RESULT =====
-
-Your Score: 2
-Computer Score: 1
-
-🎉 YOU ARE THE WINNER!
+🎉 YOU WIN THE MATCH!
 ```
 
-## 📚 Concepts Practiced
+### Best of 5
 
-This project was created to practice basic C programming concepts:
+The first player to reach **3 round wins** wins the match.
+
+```text
+===== BEST OF 5 =====
+
+Dushyant: 3
+Computer: 2
+
+🎉 YOU WIN THE MATCH!
+```
+
+## 📊 Statistics
+
+The game keeps track of your performance during the current program session.
+
+Example:
+
+```text
+===== STATISTICS =====
+Player: Dushyant
+Matches: 5
+Wins: 3
+Losses: 2
+Win Rate: 60.00%
+```
+
+## 💾 Saved Statistics
+
+The program saves statistics in:
+
+```text
+stats.txt
+```
+
+Example:
+
+```text
+STONE PAPER SCISSORS - STATISTICS
+Player: Dushyant
+Matches: 5
+Wins: 3
+Losses: 2
+Win Rate: 60.00%
+```
+
+## 📜 Game History
+
+Every round and match result is stored in:
+
+```text
+game_history.txt
+```
+
+Example:
+
+```text
+=================================
+Player: Dushyant
+Mode: Best of 3
+=================================
+Round: You = Stone | Computer = Scissors | Result = WIN
+Round: You = Paper | Computer = Stone | Result = WIN
+FINAL RESULT: Dushyant WON
+Final Score: Dushyant 2 - Computer 0
+```
+
+## 📚 C Concepts Practiced
+
+This project helps practice:
 
 * Variables and data types
 * `if-else` statements
-* `for` loops
-* User input/output
+* `while` and `do-while` loops
+* User input with `scanf()` and `fgets()`
+* Character arrays and strings
 * Random number generation
 * Input validation
 * Score calculation
+* File handling
+* `FILE` pointers
+* `fopen()`
+* `fprintf()`
+* `fclose()`
 * Basic game logic
 
 ## 🔮 Future Improvements
 
-Possible features for future versions:
+Planned features:
 
-* [ ] Play Again option
-* [ ] Player name
-* [ ] Best of 3 / Best of 5 mode
-* [ ] Game statistics
-* [ ] Game history
-* [ ] Save scores to a file
+* [ ] Load previous statistics when the game starts
 * [ ] Difficulty levels
+* [ ] Main menu
 * [ ] Leaderboard
+* [ ] Reset statistics option
+* [ ] Improved input validation
+* [ ] Multiplayer mode
+* [ ] Colored console interface
+* [ ] Game statistics menu
 
 ## 👨‍💻 Author
 
 **Dushyant Kumar**
 
-A beginner C project created while learning and practicing programming.
+A beginner C programming project created to practice programming fundamentals and build a small console-based game.
 
 ---
 
-⭐ If you found this project useful, consider giving the repository a star!
+⭐ **If you like the project, consider giving the repository a star!**
