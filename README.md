@@ -2,7 +2,7 @@
 
 A console-based **Stone Paper Scissors game written in C**, where the player competes against the computer in Best of 3 or Best of 5 matches.
 
-The project is designed as a beginner-friendly C programming project and demonstrates concepts such as loops, conditions, functions, random numbers, strings, and file handling.
+This beginner-friendly project demonstrates C programming concepts including **loops, conditions, functions, strings, random number generation, and file handling**.
 
 ## 🎮 Features
 
@@ -19,12 +19,15 @@ The project is designed as a beginner-friendly C programming project and demonst
 * 🏅 Win rate calculation
 * 💾 Save statistics to `stats.txt`
 * 📜 Game history saved to `game_history.txt`
-* 🎯 Final match result
+* 📖 Rules section
+* 🏠 Interactive Main Menu
+* 🔄 Reset Statistics option
+* 🚪 Exit option
 
 ## 🛠️ Technologies Used
 
 * **C Programming Language**
-* GCC Compiler
+* **GCC Compiler**
 * Standard C Libraries:
 
   * `stdio.h`
@@ -75,6 +78,45 @@ On Windows PowerShell:
 .\stone_paper.exe
 ```
 
+## 🏠 Main Menu
+
+After starting the game, you will see:
+
+```text
+=================================
+           MAIN MENU
+=================================
+
+1. 🎮 Play Game
+2. 📊 Statistics
+3. 📜 Game History
+4. 📖 Rules
+5. 🔄 Reset Statistics
+6. 🚪 Exit
+
+Enter your choice:
+```
+
+### Menu Options
+
+**1. Play Game**
+Starts a new Stone Paper Scissors match.
+
+**2. Statistics**
+Displays your current wins, losses, matches, and win rate.
+
+**3. Game History**
+Displays previously recorded games from `game_history.txt`.
+
+**4. Rules**
+Shows the rules of Stone Paper Scissors and the Best of 3/5 modes.
+
+**5. Reset Statistics**
+Resets the current statistics after confirmation.
+
+**6. Exit**
+Closes the game.
+
 ## 🕹️ How to Play
 
 First enter your name:
@@ -83,7 +125,7 @@ First enter your name:
 Enter your name: Dushyant
 ```
 
-Then select the match format:
+Then select the game mode:
 
 ```text
 Choose Game Mode:
@@ -99,9 +141,9 @@ Choose your move:
 3. Scissors
 ```
 
-The computer randomly selects its move.
+The computer will randomly select its move.
 
-### Rules
+## 📜 Rules
 
 | Player      | Computer    | Result           |
 | ----------- | ----------- | ---------------- |
@@ -141,7 +183,12 @@ Computer: 2
 
 ## 📊 Statistics
 
-The game keeps track of your performance during the current program session.
+The game tracks:
+
+* Total matches
+* Wins
+* Losses
+* Win rate
 
 Example:
 
@@ -156,7 +203,7 @@ Win Rate: 60.00%
 
 ## 💾 Saved Statistics
 
-The program saves statistics in:
+Statistics are saved in:
 
 ```text
 stats.txt
@@ -175,7 +222,7 @@ Win Rate: 60.00%
 
 ## 📜 Game History
 
-Every round and match result is stored in:
+Game results are stored in:
 
 ```text
 game_history.txt
@@ -188,28 +235,33 @@ Example:
 Player: Dushyant
 Mode: Best of 3
 =================================
-Round: You = Stone | Computer = Scissors | Result = WIN
-Round: You = Paper | Computer = Stone | Result = WIN
+Round: YOU WIN
+Round: DRAW
+Round: COMPUTER WINS
 FINAL RESULT: Dushyant WON
-Final Score: Dushyant 2 - Computer 0
+Final Score: Dushyant 2 - Computer 1
 ```
 
 ## 📚 C Concepts Practiced
 
-This project helps practice:
+This project demonstrates:
 
 * Variables and data types
 * `if-else` statements
-* `while` and `do-while` loops
-* User input with `scanf()` and `fgets()`
-* Character arrays and strings
+* `switch-case`
+* `while` loops
+* `do-while` loops
+* Functions
+* Pointers
+* Arrays and strings
+* `scanf()` and `fgets()`
 * Random number generation
 * Input validation
-* Score calculation
 * File handling
 * `FILE` pointers
 * `fopen()`
 * `fprintf()`
+* `fgets()`
 * `fclose()`
 * Basic game logic
 
@@ -219,19 +271,20 @@ Planned features:
 
 * [ ] Load previous statistics when the game starts
 * [ ] Difficulty levels
-* [ ] Main menu
 * [ ] Leaderboard
-* [ ] Reset statistics option
+* [ ] Two-player mode
+* [ ] Achievement system
+* [ ] Win streak system
+* [ ] Detailed statistics
+* [ ] Settings menu
 * [ ] Improved input validation
-* [ ] Multiplayer mode
 * [ ] Colored console interface
-* [ ] Game statistics menu
 
 ## 👨‍💻 Author
 
 **Dushyant Kumar**
 
-A beginner C programming project created to practice programming fundamentals and build a small console-based game.
+A beginner C programming project created to practice programming fundamentals and develop a console-based game.
 
 ---
 
