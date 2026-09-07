@@ -1,33 +1,72 @@
 # 🪨📄✂️ Stone Paper Scissors
 
-A console-based **Stone Paper Scissors game written in C**, where the player competes against the computer in Best of 3 or Best of 5 matches.
+A console-based **Stone Paper Scissors game written in C**.
 
-This beginner-friendly project demonstrates C programming concepts including **loops, conditions, functions, strings, random number generation, and file handling**.
+This project started as a simple beginner C program and has been gradually upgraded with multiple features including game modes, player statistics, game history, a main menu, and persistent statistics.
+
+---
 
 ## 🎮 Features
 
-* 🪨 Stone, 📄 Paper, and ✂️ Scissors gameplay
-* 👤 Player name support
-* 🤖 Random computer choices
-* 🏆 Automatic winner detection
-* 📊 Score tracking
-* 🔄 Play Again option
+* 🪨 Stone, Paper and Scissors gameplay
+* 👤 Player name input
+* 🤖 Computer opponent
+* 🎲 Random computer moves
+* 🏆 Winner detection
+* 📊 Match score tracking
+* 🔁 Play again option
 * 🥉 Best of 3 mode
-* 🏆 Best of 5 mode
-* ⚠️ Invalid input handling
+* 🏅 Best of 5 mode
+* ❌ Invalid input handling
 * 📈 Game statistics
-* 🏅 Win rate calculation
+* 📊 Win-rate calculation
 * 💾 Save statistics to `stats.txt`
+* 🔄 **Load previous statistics automatically**
 * 📜 Game history saved to `game_history.txt`
 * 📖 Rules section
-* 🏠 Interactive Main Menu
-* 🔄 Reset Statistics option
+* 🏠 Main menu
+* 🔄 Reset statistics
 * 🚪 Exit option
+
+---
+
+## 🆕 Latest Feature — Load Previous Statistics
+
+The game can now remember your statistics even after the program is closed.
+
+When the program starts, it reads the saved data from:
+
+```text
+stats.txt
+```
+
+It restores:
+
+* Total matches
+* Wins
+* Losses
+* Win rate
+
+### Example
+
+If the previous session ended with:
+
+```text
+Matches: 10
+Wins: 7
+Losses: 3
+```
+
+When the game is opened again, the statistics are automatically loaded.
+
+This makes the game statistics **persistent between sessions**.
+
+---
 
 ## 🛠️ Technologies Used
 
-* **C Programming Language**
-* **GCC Compiler**
+* **C Programming**
+* GCC Compiler
 * Standard C Libraries:
 
   * `stdio.h`
@@ -35,7 +74,9 @@ This beginner-friendly project demonstrates C programming concepts including **l
   * `time.h`
   * `string.h`
 
-## 📂 Project Structure
+---
+
+## 📁 Project Structure
 
 ```text
 stpgame/
@@ -46,41 +87,40 @@ stpgame/
 └── game_history.txt
 ```
 
-> `stone_paper.exe` is the compiled Windows executable and does not need to be included in the source-code repository.
+### Files
 
-## 🚀 How to Run
+| File               | Purpose                      |
+| ------------------ | ---------------------------- |
+| `stone_paper.c`    | Main game source code        |
+| `README.md`        | Project documentation        |
+| `stats.txt`        | Stores player statistics     |
+| `game_history.txt` | Stores previous game results |
 
-### 1. Clone the Repository
+---
 
-```bash
-git clone YOUR_REPOSITORY_URL
-```
+## ▶️ How to Compile
 
-### 2. Open the Project Folder
-
-```bash
-cd stpgame
-```
-
-### 3. Compile the Program
-
-Using GCC:
+Open the terminal inside the project folder and run:
 
 ```bash
 gcc stone_paper.c -o stone_paper.exe
 ```
 
-### 4. Run the Game
+---
 
-On Windows PowerShell:
+## ▶️ How to Run
+
+In PowerShell:
 
 ```powershell
 .\stone_paper.exe
 ```
 
+---
+
 ## 🏠 Main Menu
 
-After starting the game, you will see:
+After entering your name, the game displays:
 
 ```text
 =================================
@@ -93,47 +133,39 @@ After starting the game, you will see:
 4. 📖 Rules
 5. 🔄 Reset Statistics
 6. 🚪 Exit
-
-Enter your choice:
 ```
 
 ### Menu Options
 
 **1. Play Game**
+
 Starts a new Stone Paper Scissors match.
 
 **2. Statistics**
-Displays your current wins, losses, matches, and win rate.
+
+Displays your saved game statistics.
 
 **3. Game History**
-Displays previously recorded games from `game_history.txt`.
+
+Displays previous matches stored in `game_history.txt`.
 
 **4. Rules**
-Shows the rules of Stone Paper Scissors and the Best of 3/5 modes.
+
+Displays the rules of Stone Paper Scissors.
 
 **5. Reset Statistics**
-Resets the current statistics after confirmation.
+
+Resets the current statistics.
 
 **6. Exit**
-Closes the game.
 
-## 🕹️ How to Play
+Closes the program.
 
-First enter your name:
+---
 
-```text
-Enter your name: Dushyant
-```
+## 🎮 How to Play
 
-Then select the game mode:
-
-```text
-Choose Game Mode:
-1. Best of 3
-2. Best of 5
-```
-
-Choose your move:
+Choose one of the following:
 
 ```text
 1. Stone
@@ -141,31 +173,36 @@ Choose your move:
 3. Scissors
 ```
 
-The computer will randomly select its move.
+The computer randomly selects its move.
 
-## 📜 Rules
+The winner is determined using the standard rules.
 
-| Player      | Computer    | Result           |
-| ----------- | ----------- | ---------------- |
-| Stone       | Scissors    | 🏆 Player Wins   |
-| Paper       | Stone       | 🏆 Player Wins   |
-| Scissors    | Paper       | 🏆 Player Wins   |
-| Same Choice | Same Choice | 🤝 Draw          |
-| Otherwise   | —           | 💻 Computer Wins |
+---
 
-## 🥇 Game Modes
+## 📖 Rules
+
+| Player Choice | Beats       |
+| ------------- | ----------- |
+| 🪨 Stone      | ✂️ Scissors |
+| 📄 Paper      | 🪨 Stone    |
+| ✂️ Scissors   | 📄 Paper    |
+
+If both players choose the same option:
+
+```text
+DRAW
+```
+
+---
+
+## 🏆 Game Modes
 
 ### Best of 3
 
 The first player to reach **2 round wins** wins the match.
 
 ```text
-===== BEST OF 3 =====
-
-Dushyant: 2
-Computer: 1
-
-🎉 YOU WIN THE MATCH!
+Winning Score = 2
 ```
 
 ### Best of 5
@@ -173,13 +210,10 @@ Computer: 1
 The first player to reach **3 round wins** wins the match.
 
 ```text
-===== BEST OF 5 =====
-
-Dushyant: 3
-Computer: 2
-
-🎉 YOU WIN THE MATCH!
+Winning Score = 3
 ```
+
+---
 
 ## 📊 Statistics
 
@@ -193,15 +227,20 @@ The game tracks:
 Example:
 
 ```text
-===== STATISTICS =====
-Player: Dushyant
-Matches: 5
-Wins: 3
-Losses: 2
-Win Rate: 60.00%
+=================================
+          STATISTICS
+=================================
+
+Player: Alex
+Matches: 10
+Wins: 7
+Losses: 3
+Win Rate: 70.00%
 ```
 
-## 💾 Saved Statistics
+---
+
+## 💾 Persistent Statistics
 
 Statistics are saved in:
 
@@ -213,79 +252,153 @@ Example:
 
 ```text
 STONE PAPER SCISSORS - STATISTICS
-Player: Dushyant
-Matches: 5
-Wins: 3
-Losses: 2
-Win Rate: 60.00%
+Player: Alex
+Matches: 10
+Wins: 7
+Losses: 3
+Win Rate: 70.00%
 ```
+
+When the program starts again, the `loadStatistics()` function reads this file and restores the previous values.
+
+This means your statistics don't disappear when you close the game.
+
+---
 
 ## 📜 Game History
 
-Game results are stored in:
+Every match is saved in:
 
 ```text
 game_history.txt
 ```
 
-Example:
+The history contains:
 
-```text
-=================================
-Player: Dushyant
-Mode: Best of 3
-=================================
-Round: YOU WIN
-Round: DRAW
-Round: COMPUTER WINS
-FINAL RESULT: Dushyant WON
-Final Score: Dushyant 2 - Computer 1
-```
+* Player name
+* Game mode
+* Round results
+* Final result
+* Final score
 
-## 📚 C Concepts Practiced
-
-This project demonstrates:
-
-* Variables and data types
-* `if-else` statements
-* `switch-case`
-* `while` loops
-* `do-while` loops
-* Functions
-* Pointers
-* Arrays and strings
-* `scanf()` and `fgets()`
-* Random number generation
-* Input validation
-* File handling
-* `FILE` pointers
-* `fopen()`
-* `fprintf()`
-* `fgets()`
-* `fclose()`
-* Basic game logic
-
-## 🔮 Future Improvements
-
-Planned features:
-
-* [ ] Load previous statistics when the game starts
-* [ ] Difficulty levels
-* [ ] Leaderboard
-* [ ] Two-player mode
-* [ ] Achievement system
-* [ ] Win streak system
-* [ ] Detailed statistics
-* [ ] Settings menu
-* [ ] Improved input validation
-* [ ] Colored console interface
-
-## 👨‍💻 Author
-
-**Dushyant Kumar**
-
-A beginner C programming project created to practice programming fundamentals and develop a console-based game.
+This allows previous matches to be viewed later.
 
 ---
 
-⭐ **If you like the project, consider giving the repository a star!**
+## 🔄 Reset Statistics
+
+The **Reset Statistics** option sets:
+
+```text
+Matches = 0
+Wins = 0
+Losses = 0
+```
+
+The program also updates `stats.txt`.
+
+A confirmation is required before resetting.
+
+---
+
+## 🧠 C Concepts Used
+
+This project demonstrates several important C concepts:
+
+* Variables
+* Data types
+* `if-else`
+* `switch`
+* `do-while`
+* Functions
+* Pointers
+* Arrays
+* Strings
+* Structures of program logic
+* Random number generation
+* File handling
+* `fopen()`
+* `fprintf()`
+* `fscanf()` / `sscanf()`
+* `fgets()`
+* `fclose()`
+* Command-line compilation
+
+---
+
+## 📚 What I Learned
+
+Through this project I practiced:
+
+* Writing functions
+* Passing variables using pointers
+* Working with strings
+* Generating random numbers
+* Using loops and conditions
+* Creating menu-driven programs
+* Reading and writing files
+* Saving application data
+* Loading saved data when the program starts
+* Organizing a larger C program into separate functions
+
+---
+
+## 🚀 Future Improvements
+
+Possible future features:
+
+* 🤖 Difficulty levels
+* 🏆 Leaderboard
+* 👥 Two-player mode
+* 🔥 Win streak tracking
+* 🏅 Achievements
+* ⚙️ Settings menu
+* 🎨 Colored console interface
+* 📅 Date and time in game history
+* 📈 More detailed statistics
+* 🥇 Highest win streak
+* 🎯 Player vs Player mode
+* 🧠 Smarter computer AI
+* 🔐 Multiple player profiles
+
+---
+
+## 👨‍💻 Project Status
+
+**Current Version:** Feature 9
+
+The project has evolved from a basic Stone Paper Scissors program into a menu-driven C application with:
+
+```text
+Gameplay
+   ↓
+Best of 3 / Best of 5
+   ↓
+Player Name
+   ↓
+Statistics
+   ↓
+Game History
+   ↓
+Main Menu
+   ↓
+Reset Statistics
+   ↓
+Persistent Statistics
+```
+
+More features will be added progressively.
+
+---
+
+## 📌 Author
+
+**Dushyant Kumar**
+
+Built as a beginner/intermediate C programming project while learning programming fundamentals.
+
+---
+
+## 📄 License
+
+This project is open for learning and educational purposes.
