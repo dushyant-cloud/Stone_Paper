@@ -8,9 +8,16 @@ void showStatistics(char playerName[], int wins, int losses, int totalMatches);
 void showRules();
 void showHistory();
 void resetStatistics(int *wins, int *losses, int *totalMatches);
+void loadStatistics(int *wins, int *losses, int *totalMatches);
+void saveStatistics(char playerName[], int wins, int losses, int totalMatches);
+
+
+/* ================= MAIN ================= */
 
 int main() {
+
     int choice;
+
     int wins = 0;
     int losses = 0;
     int totalMatches = 0;
@@ -28,19 +35,29 @@ int main() {
 
     playerName[strcspn(playerName, "\n")] = '\0';
 
+    /* Load previous statistics */
+    loadStatistics(&wins, &losses, &totalMatches);
+
+    if (totalMatches > 0) {
+        printf("\nPrevious statistics loaded!\n");
+        printf("Matches: %d | Wins: %d | Losses: %d\n",
+               totalMatches, wins, losses);
+    }
+
     do {
+
         printf("\n=================================\n");
         printf("           MAIN MENU\n");
         printf("=================================\n");
 
         printf("Welcome, %s! 👋\n\n", playerName);
 
-        printf("1. Play Game\n");
-        printf("2. Statistics\n");
-        printf("3. Game History\n");
-        printf("4. Rules\n");
-        printf("5. Reset Statistics\n");
-        printf("6. Exit\n");
+        printf("1.  Play Game\n");
+        printf("2.  Statistics\n");
+        printf("3.  Game History\n");
+        printf("4.  Rules\n");
+        printf("5.  Reset Statistics\n");
+        printf("6.  Exit\n");
 
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
@@ -48,11 +65,17 @@ int main() {
         switch (choice) {
 
             case 1:
-                playGame(playerName, &wins, &losses, &totalMatches);
+                playGame(playerName,
+                         &wins,
+                         &losses,
+                         &totalMatches);
                 break;
 
             case 2:
-                showStatistics(playerName, wins, losses, totalMatches);
+                showStatistics(playerName,
+                               wins,
+                               losses,
+                               totalMatches);
                 break;
 
             case 3:
@@ -64,16 +87,20 @@ int main() {
                 break;
 
             case 5:
-                resetStatistics(&wins, &losses, &totalMatches);
+                resetStatistics(&wins,
+                                &losses,
+                                &totalMatches);
                 break;
 
             case 6:
-                printf("\nThanks for playing, %s! 👋\n", playerName);
+                printf("\nThanks for playing, %s! \n",
+                       playerName);
+
                 printf("Goodbye!\n");
                 break;
 
             default:
-                printf("\nInvalid choice! Please choose 1-6.\n");
+                printf("\n Invalid choice! Please choose 1-6.\n");
         }
 
     } while (choice != 6);
@@ -84,11 +111,15 @@ int main() {
 
 /* ================= PLAY GAME ================= */
 
-void playGame(char playerName[], int *wins, int *losses, int *totalMatches) {
+void playGame(char playerName[],
+              int *wins,
+              int *losses,
+              int *totalMatches) {
 
     int player, computer;
     int playerScore, computerScore;
     int mode, winningScore;
+
     char again;
 
     do {
@@ -108,36 +139,55 @@ void playGame(char playerName[], int *wins, int *losses, int *totalMatches) {
         scanf("%d", &mode);
 
         if (mode == 1) {
+
             winningScore = 2;
+
             printf("\n===== BEST OF 3 =====\n");
         }
+
         else if (mode == 2) {
+
             winningScore = 3;
+
             printf("\n===== BEST OF 5 =====\n");
         }
+
         else {
+
             printf("\nInvalid choice! Starting Best of 3.\n");
+
             winningScore = 2;
         }
+
 
         FILE *history = fopen("game_history.txt", "a");
 
         if (history != NULL) {
-            fprintf(history, "\n=================================\n");
-            fprintf(history, "Player: %s\n", playerName);
+
+            fprintf(history,
+                    "\n=================================\n");
+
+            fprintf(history,
+                    "Player: %s\n",
+                    playerName);
 
             if (winningScore == 2)
-                fprintf(history, "Mode: Best of 3\n");
+                fprintf(history,
+                        "Mode: Best of 3\n");
             else
-                fprintf(history, "Mode: Best of 5\n");
+                fprintf(history,
+                        "Mode: Best of 5\n");
 
-            fprintf(history, "=================================\n");
+            fprintf(history,
+                    "=================================\n");
         }
+
 
         while (playerScore < winningScore &&
                computerScore < winningScore) {
 
             printf("\nChoose your option:\n");
+
             printf("1. Stone\n");
             printf("2. Paper\n");
             printf("3. Scissors\n");
@@ -146,29 +196,39 @@ void playGame(char playerName[], int *wins, int *losses, int *totalMatches) {
             scanf("%d", &player);
 
             if (player < 1 || player > 3) {
-                printf("\nInvalid choice! Try again.\n");
+
+                printf("\n Invalid choice! Try again.\n");
+
                 continue;
             }
 
+
             computer = (rand() % 3) + 1;
+
 
             printf("\nYou chose: ");
 
             if (player == 1)
                 printf("Stone\n");
+
             else if (player == 2)
                 printf("Paper\n");
+
             else
                 printf("Scissors\n");
+
 
             printf("Computer chose: ");
 
             if (computer == 1)
                 printf("Stone\n");
+
             else if (computer == 2)
                 printf("Paper\n");
+
             else
                 printf("Scissors\n");
+
 
             if (player == computer) {
 
@@ -203,20 +263,28 @@ void playGame(char playerName[], int *wins, int *losses, int *totalMatches) {
                             "Round: COMPUTER WINS\n");
             }
 
+
             printf("\nScore -> %s: %d | Computer: %d\n",
                    playerName,
                    playerScore,
                    computerScore);
         }
 
+
         (*totalMatches)++;
+
 
         printf("\n=================================\n");
         printf("          MATCH RESULT\n");
         printf("=================================\n");
 
-        printf("%s: %d\n", playerName, playerScore);
-        printf("Computer: %d\n", computerScore);
+        printf("%s: %d\n",
+               playerName,
+               playerScore);
+
+        printf("Computer: %d\n",
+               computerScore);
+
 
         if (playerScore > computerScore) {
 
@@ -232,7 +300,7 @@ void playGame(char playerName[], int *wins, int *losses, int *totalMatches) {
 
         else {
 
-            printf("\nCOMPUTER WINS THE MATCH!\n");
+            printf("\n COMPUTER WINS THE MATCH!\n");
 
             (*losses)++;
 
@@ -241,7 +309,9 @@ void playGame(char playerName[], int *wins, int *losses, int *totalMatches) {
                         "FINAL RESULT: COMPUTER WON\n");
         }
 
+
         if (history != NULL) {
+
             fprintf(history,
                     "Final Score: %s %d - Computer %d\n",
                     playerName,
@@ -251,47 +321,116 @@ void playGame(char playerName[], int *wins, int *losses, int *totalMatches) {
             fclose(history);
         }
 
-        /* Save statistics */
 
-        FILE *file = fopen("stats.txt", "w");
+        /* Save updated statistics */
 
-        if (file != NULL) {
+        saveStatistics(playerName,
+                       *wins,
+                       *losses,
+                       *totalMatches);
 
-            float winRate =
-                ((float)(*wins) / (*totalMatches)) * 100;
 
-            fprintf(file,
-                    "STONE PAPER SCISSORS - STATISTICS\n");
+        printf("\nGame saved to game_history.txt");
+        printf("\nStatistics saved to stats.txt");
 
-            fprintf(file,
-                    "Player: %s\n",
-                    playerName);
 
-            fprintf(file,
-                    "Matches: %d\n",
-                    *totalMatches);
-
-            fprintf(file,
-                    "Wins: %d\n",
-                    *wins);
-
-            fprintf(file,
-                    "Losses: %d\n",
-                    *losses);
-
-            fprintf(file,
-                    "Win Rate: %.2f%%\n",
-                    winRate);
-
-            fclose(file);
-        }
-
-        printf("\nGame saved to game_history.txt\n");
-
-        printf("\nPlay another match? (y/n): ");
+        printf("\n\nPlay another match? (y/n): ");
         scanf(" %c", &again);
 
     } while (again == 'y' || again == 'Y');
+}
+
+
+/* ================= SAVE STATISTICS ================= */
+
+void saveStatistics(char playerName[],
+                    int wins,
+                    int losses,
+                    int totalMatches) {
+
+    FILE *file;
+
+    file = fopen("stats.txt", "w");
+
+    if (file != NULL) {
+
+        float winRate = 0;
+
+        if (totalMatches > 0)
+            winRate =
+                ((float)wins / totalMatches) * 100;
+
+
+        fprintf(file,
+                "STONE PAPER SCISSORS - STATISTICS\n");
+
+        fprintf(file,
+                "Player: %s\n",
+                playerName);
+
+        fprintf(file,
+                "Matches: %d\n",
+                totalMatches);
+
+        fprintf(file,
+                "Wins: %d\n",
+                wins);
+
+        fprintf(file,
+                "Losses: %d\n",
+                losses);
+
+        fprintf(file,
+                "Win Rate: %.2f%%\n",
+                winRate);
+
+        fclose(file);
+    }
+}
+
+
+/* ================= LOAD STATISTICS ================= */
+
+void loadStatistics(int *wins,
+                    int *losses,
+                    int *totalMatches) {
+
+    FILE *file;
+
+    char line[200];
+
+    file = fopen("stats.txt", "r");
+
+    /* If stats.txt doesn't exist */
+    if (file == NULL) {
+
+        return;
+    }
+
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+
+        if (sscanf(line,
+                   "Matches: %d",
+                   totalMatches) == 1) {
+            continue;
+        }
+
+        if (sscanf(line,
+                   "Wins: %d",
+                   wins) == 1) {
+            continue;
+        }
+
+        if (sscanf(line,
+                   "Losses: %d",
+                   losses) == 1) {
+            continue;
+        }
+    }
+
+
+    fclose(file);
 }
 
 
@@ -305,17 +444,28 @@ void showStatistics(char playerName[],
     float winRate = 0;
 
     if (totalMatches > 0)
-        winRate = ((float)wins / totalMatches) * 100;
+        winRate =
+            ((float)wins / totalMatches) * 100;
+
 
     printf("\n=================================\n");
     printf("          STATISTICS\n");
     printf("=================================\n");
 
-    printf("Player: %s\n", playerName);
-    printf("Matches: %d\n", totalMatches);
-    printf("Wins: %d\n", wins);
-    printf("Losses: %d\n", losses);
-    printf("Win Rate: %.2f%%\n", winRate);
+    printf("Player: %s\n",
+           playerName);
+
+    printf("Matches: %d\n",
+           totalMatches);
+
+    printf("Wins: %d\n",
+           wins);
+
+    printf("Losses: %d\n",
+           losses);
+
+    printf("Win Rate: %.2f%%\n",
+           winRate);
 }
 
 
@@ -327,8 +477,8 @@ void showRules() {
     printf("             RULES\n");
     printf("=================================\n");
 
-    printf("\nStone beats Scissors\n");
-    printf("Paper beats Stone\n");
+    printf("\n Stone beats Scissors\n");
+    printf(" Paper beats Stone\n");
     printf("Scissors beats Paper\n");
 
     printf("\nSame choice = DRAW\n");
@@ -346,23 +496,31 @@ void showRules() {
 void showHistory() {
 
     FILE *history;
+
     char line[200];
 
     history = fopen("game_history.txt", "r");
 
     if (history == NULL) {
 
-        printf("\nNo game history found.\n");
+        printf("\n No game history found.\n");
+
         return;
     }
+
 
     printf("\n=================================\n");
     printf("          GAME HISTORY\n");
     printf("=================================\n");
 
-    while (fgets(line, sizeof(line), history) != NULL) {
+
+    while (fgets(line,
+                  sizeof(line),
+                  history) != NULL) {
+
         printf("%s", line);
     }
+
 
     fclose(history);
 }
@@ -377,7 +535,9 @@ void resetStatistics(int *wins,
     char confirm;
 
     printf("\nAre you sure you want to reset statistics? (y/n): ");
+
     scanf(" %c", &confirm);
+
 
     if (confirm == 'y' || confirm == 'Y') {
 
@@ -385,21 +545,26 @@ void resetStatistics(int *wins,
         *losses = 0;
         *totalMatches = 0;
 
+
         FILE *file = fopen("stats.txt", "w");
 
         if (file != NULL) {
+
             fprintf(file,
                     "STONE PAPER SCISSORS - STATISTICS\n");
+
             fprintf(file,
                     "Statistics have been reset.\n");
 
             fclose(file);
         }
 
-        printf("\nStatistics reset successfully!\n");
+
+        printf("\n Statistics reset successfully!\n");
     }
 
     else {
+
         printf("\nReset cancelled.\n");
     }
 }
