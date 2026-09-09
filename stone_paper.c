@@ -4,24 +4,32 @@
 #include <string.h>
 
 void playGame(char playerName[], int *wins, int *losses,
-              int *totalMatches, int *currentStreak, int *bestStreak);
+              int *totalMatches, int *currentStreak, int *bestStreak,
+              int *xp, int *level);
 
 void showStatistics(char playerName[], int wins, int losses,
-                    int totalMatches, int currentStreak, int bestStreak);
+                    int totalMatches, int currentStreak,
+                    int bestStreak, int xp, int level);
 
 void showRules();
 void showHistory();
 
 void resetStatistics(int *wins, int *losses, int *totalMatches,
-                     int *currentStreak, int *bestStreak);
+                     int *currentStreak, int *bestStreak,
+                     int *xp, int *level);
 
 void loadStatistics(int *wins, int *losses, int *totalMatches,
-                    int *currentStreak, int *bestStreak);
+                    int *currentStreak, int *bestStreak,
+                    int *xp, int *level);
 
 void saveStatistics(char playerName[], int wins, int losses,
-                    int totalMatches, int currentStreak, int bestStreak);
+                    int totalMatches, int currentStreak,
+                    int bestStreak, int xp, int level);
 
-void showAchievements(int wins, int currentStreak, int bestStreak);
+void showAchievements(int wins, int currentStreak,
+                      int bestStreak, int level);
+
+int getComputerMove(int player, int difficulty);
 
 
 /* ================= MAIN ================= */
@@ -37,9 +45,13 @@ int main() {
     int currentStreak = 0;
     int bestStreak = 0;
 
+    int xp = 0;
+    int level = 1;
+
     char playerName[50];
 
     srand(time(NULL));
+
 
     printf("=================================\n");
     printf("     STONE PAPER SCISSORS\n");
@@ -52,27 +64,29 @@ int main() {
     playerName[strcspn(playerName, "\n")] = '\0';
 
 
-    /* Load previous statistics */
+    /* Load saved statistics */
 
     loadStatistics(&wins,
                    &losses,
                    &totalMatches,
                    &currentStreak,
-                   &bestStreak);
+                   &bestStreak,
+                   &xp,
+                   &level);
 
 
     if (totalMatches > 0) {
 
-        printf("\n✅ Previous statistics loaded!\n");
+        printf("\nPrevious statistics loaded!\n");
 
         printf("Matches: %d | Wins: %d | Losses: %d\n",
-               totalMatches,
-               wins,
-               losses);
+               totalMatches, wins, losses);
 
         printf("Current Streak: %d | Best Streak: %d\n",
-               currentStreak,
-               bestStreak);
+               currentStreak, bestStreak);
+
+        printf("Level: %d | XP: %d\n",
+               level, xp);
     }
 
 
@@ -82,15 +96,18 @@ int main() {
         printf("           MAIN MENU\n");
         printf("=================================\n");
 
-        printf("Welcome, %s! 👋\n\n", playerName);
+        printf("Welcome, %s!\n", playerName);
 
-        printf("1. 🎮 Play Game\n");
-        printf("2. 📊 Statistics\n");
-        printf("3. 📜 Game History\n");
-        printf("4. 📖 Rules\n");
-        printf("5. 🏆 Achievements\n");
-        printf("6. 🔄 Reset Statistics\n");
-        printf("7. 🚪 Exit\n");
+        printf("Level %d | XP %d\n\n",
+               level, xp);
+
+        printf("1. Play Game\n");
+        printf("2. Statistics\n");
+        printf("3. Game History\n");
+        printf("4. Rules\n");
+        printf("5. Achievements\n");
+        printf("6. Reset Statistics\n");
+        printf("7. Exit\n");
 
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
@@ -105,7 +122,9 @@ int main() {
                          &losses,
                          &totalMatches,
                          &currentStreak,
-                         &bestStreak);
+                         &bestStreak,
+                         &xp,
+                         &level);
 
                 break;
 
@@ -117,7 +136,9 @@ int main() {
                                losses,
                                totalMatches,
                                currentStreak,
-                               bestStreak);
+                               bestStreak,
+                               xp,
+                               level);
 
                 break;
 
@@ -140,7 +161,8 @@ int main() {
 
                 showAchievements(wins,
                                  currentStreak,
-                                 bestStreak);
+                                 bestStreak,
+                                 level);
 
                 break;
 
@@ -151,15 +173,20 @@ int main() {
                                 &losses,
                                 &totalMatches,
                                 &currentStreak,
-                                &bestStreak);
+                                &bestStreak,
+                                &xp,
+                                &level);
 
                 break;
 
 
             case 7:
 
-                printf("\nThanks for playing, %s! 👋\n",
+                printf("\nThanks for playing, %s!\n",
                        playerName);
+
+                printf("Final Level: %d\n", level);
+                printf("Final XP: %d\n", xp);
 
                 printf("Goodbye!\n");
 
@@ -168,7 +195,7 @@ int main() {
 
             default:
 
-                printf("\n❌ Invalid choice! Please choose 1-7.\n");
+                printf("\nInvalid choice! Please choose 1-7.\n");
         }
 
     } while (choice != 7);
@@ -185,7 +212,9 @@ void playGame(char playerName[],
               int *losses,
               int *totalMatches,
               int *currentStreak,
-              int *bestStreak) {
+              int *bestStreak,
+              int *xp,
+              int *level) {
 
     int player;
     int computer;
@@ -195,6 +224,8 @@ void playGame(char playerName[],
 
     int mode;
     int winningScore;
+
+    int difficulty;
 
     char again;
 
@@ -210,7 +241,43 @@ void playGame(char playerName[],
         printf("=================================\n");
 
 
+        /* ================= DIFFICULTY ================= */
+
+        printf("\nChoose Difficulty:\n");
+
+        printf("1. Easy\n");
+        printf("2. Medium\n");
+        printf("3. Hard\n");
+
+        printf("\nEnter difficulty: ");
+        scanf("%d", &difficulty);
+
+
+        if (difficulty < 1 || difficulty > 3) {
+
+            printf("\nInvalid difficulty!\n");
+            printf("Defaulting to Easy.\n");
+
+            difficulty = 1;
+        }
+
+
+        printf("\nDifficulty: ");
+
+        if (difficulty == 1)
+            printf("EASY\n");
+
+        else if (difficulty == 2)
+            printf("MEDIUM\n");
+
+        else
+            printf("HARD\n");
+
+
+        /* ================= GAME MODE ================= */
+
         printf("\nChoose Game Mode:\n");
+
         printf("1. Best of 3\n");
         printf("2. Best of 5\n");
 
@@ -234,7 +301,8 @@ void playGame(char playerName[],
 
         else {
 
-            printf("\nInvalid choice! Starting Best of 3.\n");
+            printf("\nInvalid choice!");
+            printf(" Starting Best of 3.\n");
 
             winningScore = 2;
         }
@@ -252,17 +320,35 @@ void playGame(char playerName[],
                     "Player: %s\n",
                     playerName);
 
+
+            if (difficulty == 1)
+                fprintf(history,
+                        "Difficulty: Easy\n");
+
+            else if (difficulty == 2)
+                fprintf(history,
+                        "Difficulty: Medium\n");
+
+            else
+                fprintf(history,
+                        "Difficulty: Hard\n");
+
+
             if (winningScore == 2)
                 fprintf(history,
                         "Mode: Best of 3\n");
+
             else
                 fprintf(history,
                         "Mode: Best of 5\n");
+
 
             fprintf(history,
                     "=================================\n");
         }
 
+
+        /* ================= GAME LOOP ================= */
 
         while (playerScore < winningScore &&
                computerScore < winningScore) {
@@ -280,13 +366,15 @@ void playGame(char playerName[],
 
             if (player < 1 || player > 3) {
 
-                printf("\n❌ Invalid choice! Try again.\n");
+                printf("\nInvalid choice! Try again.\n");
 
                 continue;
             }
 
 
-            computer = (rand() % 3) + 1;
+            /* Get computer move based on difficulty */
+
+            computer = getComputerMove(player, difficulty);
 
 
             printf("\nYou chose: ");
@@ -312,6 +400,8 @@ void playGame(char playerName[],
             else
                 printf("Scissors\n");
 
+
+            /* ================= RESULT ================= */
 
             if (player == computer) {
 
@@ -358,6 +448,8 @@ void playGame(char playerName[],
         }
 
 
+        /* ================= MATCH RESULT ================= */
+
         (*totalMatches)++;
 
 
@@ -378,29 +470,41 @@ void playGame(char playerName[],
 
         if (playerScore > computerScore) {
 
-            printf("\n🎉 YOU WIN THE MATCH!\n");
+            printf("\nYOU WIN THE MATCH!\n");
 
             (*wins)++;
 
-            /* Increase current streak */
-
             (*currentStreak)++;
 
-
-            /* Update best streak */
 
             if (*currentStreak > *bestStreak) {
 
                 *bestStreak = *currentStreak;
 
-                printf("🔥 NEW BEST WIN STREAK: %d!\n",
+                printf("NEW BEST STREAK: %d!\n",
                        *bestStreak);
             }
 
-            else {
 
-                printf("🔥 Current Win Streak: %d\n",
-                       *currentStreak);
+            /* XP reward */
+
+            *xp += 100;
+
+            printf("+100 XP!\n");
+
+
+            /* Level calculation */
+
+            int newLevel = (*xp / 500) + 1;
+
+
+            if (newLevel > *level) {
+
+                *level = newLevel;
+
+                printf("\nLEVEL UP!\n");
+                printf("You are now Level %d!\n",
+                       *level);
             }
 
 
@@ -415,21 +519,34 @@ void playGame(char playerName[],
 
         else {
 
-            printf("\n💻 COMPUTER WINS THE MATCH!\n");
+            printf("\nCOMPUTER WINS THE MATCH!\n");
 
             (*losses)++;
 
 
             if (*currentStreak > 0) {
 
-                printf("💔 Your %d-match win streak ended!\n",
+                printf("Your %d-match streak ended!\n",
                        *currentStreak);
             }
 
 
-            /* Reset current streak */
-
             *currentStreak = 0;
+
+
+            /* XP penalty */
+
+            if (*xp >= 25)
+                *xp -= 25;
+
+            else
+                *xp = 0;
+
+
+            printf("-25 XP\n");
+
+
+            *level = (*xp / 500) + 1;
 
 
             if (history != NULL)
@@ -447,8 +564,16 @@ void playGame(char playerName[],
                     computerScore);
 
             fprintf(history,
-                    "Current Win Streak: %d\n",
+                    "Current Streak: %d\n",
                     *currentStreak);
+
+            fprintf(history,
+                    "Level: %d\n",
+                    *level);
+
+            fprintf(history,
+                    "XP: %d\n",
+                    *xp);
 
             fclose(history);
         }
@@ -461,40 +586,111 @@ void playGame(char playerName[],
                        *losses,
                        *totalMatches,
                        *currentStreak,
-                       *bestStreak);
+                       *bestStreak,
+                       *xp,
+                       *level);
 
 
-        printf("\nGame saved to game_history.txt");
-        printf("\nStatistics saved to stats.txt");
+        printf("\nGame saved.");
+        printf("\nCurrent XP: %d",
+               *xp);
+
+        printf("\nCurrent Level: %d\n",
+               *level);
 
 
-        /* Achievement notification */
-
-        if (*currentStreak == 3) {
-
-            printf("\n🏆 ACHIEVEMENT UNLOCKED!");
-            printf("\n🔥 3-Win Streak!");
-        }
-
-        else if (*currentStreak == 5) {
-
-            printf("\n🏆 ACHIEVEMENT UNLOCKED!");
-            printf("\n🔥 5-Win Streak!");
-        }
-
-        else if (*currentStreak == 10) {
-
-            printf("\n🏆 ACHIEVEMENT UNLOCKED!");
-            printf("\n🔥 10-Win Streak!");
-        }
-
-
-        printf("\n\nPlay another match? (y/n): ");
+        printf("\nPlay another match? (y/n): ");
 
         scanf(" %c", &again);
 
 
     } while (again == 'y' || again == 'Y');
+}
+
+
+/* ================= COMPUTER AI ================= */
+
+int getComputerMove(int player, int difficulty) {
+
+    int randomMove;
+    int chance;
+
+
+    /* ================= EASY ================= */
+
+    if (difficulty == 1) {
+
+        /*
+         * Easy:
+         * Completely random move.
+         */
+
+        return (rand() % 3) + 1;
+    }
+
+
+    /* ================= MEDIUM ================= */
+
+    else if (difficulty == 2) {
+
+        /*
+         * Medium:
+         * 50% chance of random move.
+         * 50% chance of countering player.
+         */
+
+        chance = rand() % 100;
+
+
+        if (chance < 50) {
+
+            return (rand() % 3) + 1;
+        }
+
+
+        /* Counter player's move */
+
+        if (player == 1)
+            return 2;       /* Paper beats Stone */
+
+        else if (player == 2)
+            return 3;       /* Scissors beats Paper */
+
+        else
+            return 1;       /* Stone beats Scissors */
+    }
+
+
+    /* ================= HARD ================= */
+
+    else {
+
+        /*
+         * Hard:
+         * 75% chance of countering player.
+         * 25% chance of random move.
+         */
+
+        chance = rand() % 100;
+
+
+        if (chance < 75) {
+
+            if (player == 1)
+                return 2;
+
+            else if (player == 2)
+                return 3;
+
+            else
+                return 1;
+        }
+
+
+        randomMove = (rand() % 3) + 1;
+
+        return randomMove;
+    }
 }
 
 
@@ -505,7 +701,9 @@ void saveStatistics(char playerName[],
                     int losses,
                     int totalMatches,
                     int currentStreak,
-                    int bestStreak) {
+                    int bestStreak,
+                    int xp,
+                    int level) {
 
     FILE *file;
 
@@ -553,6 +751,14 @@ void saveStatistics(char playerName[],
                 "Best Streak: %d\n",
                 bestStreak);
 
+        fprintf(file,
+                "XP: %d\n",
+                xp);
+
+        fprintf(file,
+                "Level: %d\n",
+                level);
+
 
         fclose(file);
     }
@@ -565,7 +771,9 @@ void loadStatistics(int *wins,
                     int *losses,
                     int *totalMatches,
                     int *currentStreak,
-                    int *bestStreak) {
+                    int *bestStreak,
+                    int *xp,
+                    int *level) {
 
     FILE *file;
 
@@ -588,42 +796,44 @@ void loadStatistics(int *wins,
 
         if (sscanf(line,
                    "Matches: %d",
-                   totalMatches) == 1) {
-
+                   totalMatches) == 1)
             continue;
-        }
 
 
         if (sscanf(line,
                    "Wins: %d",
-                   wins) == 1) {
-
+                   wins) == 1)
             continue;
-        }
 
 
         if (sscanf(line,
                    "Losses: %d",
-                   losses) == 1) {
-
+                   losses) == 1)
             continue;
-        }
 
 
         if (sscanf(line,
                    "Current Streak: %d",
-                   currentStreak) == 1) {
-
+                   currentStreak) == 1)
             continue;
-        }
 
 
         if (sscanf(line,
                    "Best Streak: %d",
-                   bestStreak) == 1) {
-
+                   bestStreak) == 1)
             continue;
-        }
+
+
+        if (sscanf(line,
+                   "XP: %d",
+                   xp) == 1)
+            continue;
+
+
+        if (sscanf(line,
+                   "Level: %d",
+                   level) == 1)
+            continue;
     }
 
 
@@ -638,7 +848,9 @@ void showStatistics(char playerName[],
                     int losses,
                     int totalMatches,
                     int currentStreak,
-                    int bestStreak) {
+                    int bestStreak,
+                    int xp,
+                    int level) {
 
     float winRate = 0;
 
@@ -668,11 +880,20 @@ void showStatistics(char playerName[],
     printf("Win Rate: %.2f%%\n",
            winRate);
 
-    printf("🔥 Current Win Streak: %d\n",
+    printf("Current Win Streak: %d\n",
            currentStreak);
 
-    printf("🏆 Best Win Streak: %d\n",
+    printf("Best Win Streak: %d\n",
            bestStreak);
+
+    printf("XP: %d\n",
+           xp);
+
+    printf("Level: %d\n",
+           level);
+
+    printf("\nXP needed for next level: %d\n",
+           (level * 500) - xp);
 }
 
 
@@ -680,43 +901,48 @@ void showStatistics(char playerName[],
 
 void showAchievements(int wins,
                       int currentStreak,
-                      int bestStreak) {
+                      int bestStreak,
+                      int level) {
 
     printf("\n=================================\n");
     printf("          ACHIEVEMENTS\n");
     printf("=================================\n");
 
 
-    /* First Win */
-
     if (wins >= 1)
-        printf("🏆 [UNLOCKED] First Victory\n");
+        printf("[UNLOCKED] First Victory\n");
     else
-        printf("🔒 [LOCKED] First Victory - Win 1 match\n");
+        printf("[LOCKED] First Victory\n");
 
-
-    /* 3 Win Streak */
 
     if (bestStreak >= 3)
-        printf("🔥 [UNLOCKED] 3-Win Streak\n");
+        printf("[UNLOCKED] 3-Win Streak\n");
     else
-        printf("🔒 [LOCKED] 3-Win Streak - Win 3 matches in a row\n");
+        printf("[LOCKED] 3-Win Streak\n");
 
-
-    /* 5 Win Streak */
 
     if (bestStreak >= 5)
-        printf("🔥 [UNLOCKED] 5-Win Streak\n");
+        printf("[UNLOCKED] 5-Win Streak\n");
     else
-        printf("🔒 [LOCKED] 5-Win Streak - Win 5 matches in a row\n");
+        printf("[LOCKED] 5-Win Streak\n");
 
-
-    /* 10 Win Streak */
 
     if (bestStreak >= 10)
-        printf("🔥 [UNLOCKED] 10-Win Streak\n");
+        printf("[UNLOCKED] 10-Win Streak\n");
     else
-        printf("🔒 [LOCKED] 10-Win Streak - Win 10 matches in a row\n");
+        printf("[LOCKED] 10-Win Streak\n");
+
+
+    if (level >= 5)
+        printf("[UNLOCKED] Level 5\n");
+    else
+        printf("[LOCKED] Level 5\n");
+
+
+    if (level >= 10)
+        printf("[UNLOCKED] Level 10\n");
+    else
+        printf("[LOCKED] Level 10\n");
 
 
     printf("\nCurrent Streak: %d\n",
@@ -724,6 +950,9 @@ void showAchievements(int wins,
 
     printf("Best Streak: %d\n",
            bestStreak);
+
+    printf("Current Level: %d\n",
+           level);
 }
 
 
@@ -736,20 +965,32 @@ void showRules() {
     printf("=================================\n");
 
 
-    printf("\n🪨 Stone beats Scissors\n");
-    printf("📄 Paper beats Stone\n");
-    printf("✂️ Scissors beats Paper\n");
+    printf("\nStone beats Scissors\n");
+    printf("Paper beats Stone\n");
+    printf("Scissors beats Paper\n");
 
 
     printf("\nSame choice = DRAW\n");
 
 
     printf("\nBest of 3:\n");
-    printf("First player to reach 2 wins wins the match.\n");
+    printf("First player to reach 2 round wins wins.\n");
 
 
     printf("\nBest of 5:\n");
-    printf("First player to reach 3 wins wins the match.\n");
+    printf("First player to reach 3 round wins wins.\n");
+
+
+    printf("\nXP SYSTEM:\n");
+    printf("+100 XP for a match victory\n");
+    printf("-25 XP for a match loss\n");
+    printf("500 XP = 1 Level\n");
+
+
+    printf("\nDIFFICULTY:\n");
+    printf("Easy   - Random computer moves\n");
+    printf("Medium - 50%% chance to counter\n");
+    printf("Hard   - 75%% chance to counter\n");
 }
 
 
@@ -767,7 +1008,7 @@ void showHistory() {
 
     if (history == NULL) {
 
-        printf("\n📜 No game history found.\n");
+        printf("\nNo game history found.\n");
 
         return;
     }
@@ -796,7 +1037,9 @@ void resetStatistics(int *wins,
                      int *losses,
                      int *totalMatches,
                      int *currentStreak,
-                     int *bestStreak) {
+                     int *bestStreak,
+                     int *xp,
+                     int *level) {
 
     char confirm;
 
@@ -815,6 +1058,9 @@ void resetStatistics(int *wins,
         *currentStreak = 0;
         *bestStreak = 0;
 
+        *xp = 0;
+        *level = 1;
+
 
         FILE *file = fopen("stats.txt", "w");
 
@@ -831,7 +1077,7 @@ void resetStatistics(int *wins,
         }
 
 
-        printf("\n✅ Statistics reset successfully!\n");
+        printf("\nStatistics reset successfully!\n");
     }
 
     else {

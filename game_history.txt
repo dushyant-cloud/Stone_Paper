@@ -33,3 +33,30 @@ Round: You = Stone | Computer = Scissors | Result = WIN
 Round: You = Stone | Computer = Paper | Result = LOSS
 FINAL RESULT: COMPUTER WON
 Final Score: Debu 1 - Computer 2
+
+=================================
+Player: Debu
+Mode: Best of 3
+=================================
+Round: COMPUTER WINS
+Round: DRAW
+Round: YOU WIN
+Round: YOU WIN
+FINAL RESULT: Debu WON
+Final Score: Debu 2 - Computer 1
+Current Win Streak: 1
+
+=================================
+Player: Debu
+Difficulty: Hard
+Mode: Best of 3
+=================================
+Round: YOU WIN
+Round: DRAW
+Round: COMPUTER WINS
+Round: COMPUTER WINS
+FINAL RESULT: COMPUTER WON
+Final Score: Debu 1 - Computer 2
+Current Streak: 0
+Level: 1
+XP: 0
