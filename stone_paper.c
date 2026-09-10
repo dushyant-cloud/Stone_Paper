@@ -3,6 +3,22 @@
 #include <time.h>
 #include <string.h>
 
+#define MAX_PLAYERS 10
+
+/* ================= STRUCTURES ================= */
+
+struct Player {
+    char name[50];
+    int wins;
+    int losses;
+    int xp;
+    int level;
+    int bestStreak;
+};
+
+
+/* ================= FUNCTION DECLARATIONS ================= */
+
 void playGame(char playerName[], int *wins, int *losses,
               int *totalMatches, int *currentStreak, int *bestStreak,
               int *xp, int *level);
@@ -30,6 +46,13 @@ void showAchievements(int wins, int currentStreak,
                       int bestStreak, int level);
 
 int getComputerMove(int player, int difficulty);
+
+/* Leaderboard functions */
+
+void updateLeaderboard(char playerName[], int wins, int losses,
+                       int xp, int level, int bestStreak);
+
+void showLeaderboard();
 
 
 /* ================= MAIN ================= */
@@ -106,8 +129,9 @@ int main() {
         printf("3. Game History\n");
         printf("4. Rules\n");
         printf("5. Achievements\n");
-        printf("6. Reset Statistics\n");
-        printf("7. Exit\n");
+        printf("6. Leaderboard\n");
+        printf("7. Reset Statistics\n");
+        printf("8. Exit\n");
 
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
@@ -169,6 +193,13 @@ int main() {
 
             case 6:
 
+                showLeaderboard();
+
+                break;
+
+
+            case 7:
+
                 resetStatistics(&wins,
                                 &losses,
                                 &totalMatches,
@@ -180,7 +211,7 @@ int main() {
                 break;
 
 
-            case 7:
+            case 8:
 
                 printf("\nThanks for playing, %s!\n",
                        playerName);
@@ -195,10 +226,10 @@ int main() {
 
             default:
 
-                printf("\nInvalid choice! Please choose 1-7.\n");
+                printf("\nInvalid choice! Please choose 1-8.\n");
         }
 
-    } while (choice != 7);
+    } while (choice != 8);
 
 
     return 0;
@@ -301,8 +332,7 @@ void playGame(char playerName[],
 
         else {
 
-            printf("\nInvalid choice!");
-            printf(" Starting Best of 3.\n");
+            printf("\nInvalid choice! Starting Best of 3.\n");
 
             winningScore = 2;
         }
@@ -372,7 +402,7 @@ void playGame(char playerName[],
             }
 
 
-            /* Get computer move based on difficulty */
+            /* Computer AI */
 
             computer = getComputerMove(player, difficulty);
 
@@ -591,7 +621,19 @@ void playGame(char playerName[],
                        *level);
 
 
+        /* ================= LEADERBOARD UPDATE ================= */
+
+        updateLeaderboard(playerName,
+                          *wins,
+                          *losses,
+                          *xp,
+                          *level,
+                          *bestStreak);
+
+
         printf("\nGame saved.");
+        printf("\nLeaderboard updated!");
+
         printf("\nCurrent XP: %d",
                *xp);
 
@@ -616,28 +658,17 @@ int getComputerMove(int player, int difficulty) {
     int chance;
 
 
-    /* ================= EASY ================= */
+    /* EASY */
 
     if (difficulty == 1) {
-
-        /*
-         * Easy:
-         * Completely random move.
-         */
 
         return (rand() % 3) + 1;
     }
 
 
-    /* ================= MEDIUM ================= */
+    /* MEDIUM */
 
     else if (difficulty == 2) {
-
-        /*
-         * Medium:
-         * 50% chance of random move.
-         * 50% chance of countering player.
-         */
 
         chance = rand() % 100;
 
@@ -648,28 +679,20 @@ int getComputerMove(int player, int difficulty) {
         }
 
 
-        /* Counter player's move */
-
         if (player == 1)
-            return 2;       /* Paper beats Stone */
+            return 2;
 
         else if (player == 2)
-            return 3;       /* Scissors beats Paper */
+            return 3;
 
         else
-            return 1;       /* Stone beats Scissors */
+            return 1;
     }
 
 
-    /* ================= HARD ================= */
+    /* HARD */
 
     else {
-
-        /*
-         * Hard:
-         * 75% chance of countering player.
-         * 25% chance of random move.
-         */
 
         chance = rand() % 100;
 
@@ -783,10 +806,8 @@ void loadStatistics(int *wins,
     file = fopen("stats.txt", "r");
 
 
-    if (file == NULL) {
-
+    if (file == NULL)
         return;
-    }
 
 
     while (fgets(line,
@@ -865,32 +886,23 @@ void showStatistics(char playerName[],
     printf("=================================\n");
 
 
-    printf("Player: %s\n",
-           playerName);
+    printf("Player: %s\n", playerName);
 
-    printf("Matches: %d\n",
-           totalMatches);
+    printf("Matches: %d\n", totalMatches);
 
-    printf("Wins: %d\n",
-           wins);
+    printf("Wins: %d\n", wins);
 
-    printf("Losses: %d\n",
-           losses);
+    printf("Losses: %d\n", losses);
 
-    printf("Win Rate: %.2f%%\n",
-           winRate);
+    printf("Win Rate: %.2f%%\n", winRate);
 
-    printf("Current Win Streak: %d\n",
-           currentStreak);
+    printf("Current Win Streak: %d\n", currentStreak);
 
-    printf("Best Win Streak: %d\n",
-           bestStreak);
+    printf("Best Win Streak: %d\n", bestStreak);
 
-    printf("XP: %d\n",
-           xp);
+    printf("XP: %d\n", xp);
 
-    printf("Level: %d\n",
-           level);
+    printf("Level: %d\n", level);
 
     printf("\nXP needed for next level: %d\n",
            (level * 500) - xp);
@@ -969,7 +981,6 @@ void showRules() {
     printf("Paper beats Stone\n");
     printf("Scissors beats Paper\n");
 
-
     printf("\nSame choice = DRAW\n");
 
 
@@ -991,6 +1002,10 @@ void showRules() {
     printf("Easy   - Random computer moves\n");
     printf("Medium - 50%% chance to counter\n");
     printf("Hard   - 75%% chance to counter\n");
+
+
+    printf("\nLEADERBOARD:\n");
+    printf("Top 10 players are ranked by XP.\n");
 }
 
 
@@ -1084,4 +1099,231 @@ void resetStatistics(int *wins,
 
         printf("\nReset cancelled.\n");
     }
+}
+
+
+/* ================================================= */
+/*                 LEADERBOARD SYSTEM                */
+/* ================================================= */
+
+
+/* Compare players by XP */
+
+int comparePlayers(const void *a, const void *b) {
+
+    struct Player *playerA = (struct Player *)a;
+    struct Player *playerB = (struct Player *)b;
+
+
+    return playerB->xp - playerA->xp;
+}
+
+
+/* ================= UPDATE LEADERBOARD ================= */
+
+void updateLeaderboard(char playerName[],
+                       int wins,
+                       int losses,
+                       int xp,
+                       int level,
+                       int bestStreak) {
+
+    struct Player players[MAX_PLAYERS + 1];
+
+    int count = 0;
+    int found = 0;
+
+    int i;
+
+    FILE *file;
+
+
+    /* ================= LOAD LEADERBOARD ================= */
+
+    file = fopen("leaderboard.txt", "r");
+
+
+    if (file != NULL) {
+
+        while (count < MAX_PLAYERS &&
+               fscanf(file,
+                      "%49[^|]|%d|%d|%d|%d|%d\n",
+                      players[count].name,
+                      &players[count].wins,
+                      &players[count].losses,
+                      &players[count].xp,
+                      &players[count].level,
+                      &players[count].bestStreak) == 6) {
+
+            count++;
+        }
+
+
+        fclose(file);
+    }
+
+
+    /* ================= FIND PLAYER ================= */
+
+    for (i = 0; i < count; i++) {
+
+        if (strcmp(players[i].name, playerName) == 0) {
+
+            players[i].wins = wins;
+            players[i].losses = losses;
+            players[i].xp = xp;
+            players[i].level = level;
+            players[i].bestStreak = bestStreak;
+
+            found = 1;
+
+            break;
+        }
+    }
+
+
+    /* ================= ADD NEW PLAYER ================= */
+
+    if (!found) {
+
+        if (count < MAX_PLAYERS + 1) {
+
+            strcpy(players[count].name, playerName);
+
+            players[count].wins = wins;
+            players[count].losses = losses;
+            players[count].xp = xp;
+            players[count].level = level;
+            players[count].bestStreak = bestStreak;
+
+            count++;
+        }
+    }
+
+
+    /* ================= SORT ================= */
+
+    qsort(players,
+          count,
+          sizeof(struct Player),
+          comparePlayers);
+
+
+    /* ================= KEEP TOP 10 ================= */
+
+    if (count > MAX_PLAYERS)
+        count = MAX_PLAYERS;
+
+
+    /* ================= SAVE ================= */
+
+    file = fopen("leaderboard.txt", "w");
+
+
+    if (file != NULL) {
+
+        for (i = 0; i < count; i++) {
+
+            fprintf(file,
+                    "%s|%d|%d|%d|%d|%d\n",
+                    players[i].name,
+                    players[i].wins,
+                    players[i].losses,
+                    players[i].xp,
+                    players[i].level,
+                    players[i].bestStreak);
+        }
+
+
+        fclose(file);
+    }
+}
+
+
+/* ================= SHOW LEADERBOARD ================= */
+
+void showLeaderboard() {
+
+    struct Player players[MAX_PLAYERS];
+
+    int count = 0;
+
+    int i;
+
+    FILE *file;
+
+
+    file = fopen("leaderboard.txt", "r");
+
+
+    if (file == NULL) {
+
+        printf("\n=================================\n");
+        printf("          LEADERBOARD\n");
+        printf("=================================\n");
+
+        printf("\nNo leaderboard data found yet.\n");
+
+        printf("Play a game to enter the leaderboard!\n");
+
+        return;
+    }
+
+
+    while (count < MAX_PLAYERS &&
+           fscanf(file,
+                  "%49[^|]|%d|%d|%d|%d|%d\n",
+                  players[count].name,
+                  &players[count].wins,
+                  &players[count].losses,
+                  &players[count].xp,
+                  &players[count].level,
+                  &players[count].bestStreak) == 6) {
+
+        count++;
+    }
+
+
+    fclose(file);
+
+
+    /* Sort before displaying */
+
+    qsort(players,
+          count,
+          sizeof(struct Player),
+          comparePlayers);
+
+
+    printf("\n");
+    printf("===============================================================\n");
+    printf("                     LEADERBOARD\n");
+    printf("===============================================================\n");
+
+    printf("%-5s %-20s %-8s %-8s %-8s %-8s\n",
+           "Rank",
+           "Player",
+           "XP",
+           "Level",
+           "Wins",
+           "Streak");
+
+    printf("---------------------------------------------------------------\n");
+
+
+    for (i = 0; i < count; i++) {
+
+        printf("%-5d %-20s %-8d %-8d %-8d %-8d\n",
+               i + 1,
+               players[i].name,
+               players[i].xp,
+               players[i].level,
+               players[i].wins,
+               players[i].bestStreak);
+    }
+
+
+    printf("===============================================================\n");
+
+    printf("\nRanking is based on XP.\n");
 }
