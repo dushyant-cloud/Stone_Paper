@@ -1,347 +1,282 @@
 # 🪨📄✂️ Stone Paper Scissors
 
-A console-based **Stone Paper Scissors game written in C**.
+A beginner-friendly **Stone Paper Scissors game written in C**, progressively upgraded with game modes, player statistics, persistent data, game history, achievements, XP, levels, difficulty-based AI, and a persistent leaderboard system.
 
-This project started as a simple beginner C program and has been progressively upgraded with game modes, statistics, persistent data, game history, win streaks, achievements, XP, levels, and now a **multi-level computer AI system**.
-
----
-
-# 🎮 Features
-
-* 🪨 Stone, Paper and Scissors gameplay
-* 👤 Player name input
-* 🤖 Computer opponent
-* 🎲 Random computer moves
-* 🧠 Difficulty-based computer AI
-* 🟢 Easy difficulty
-* 🟡 Medium difficulty
-* 🔴 Hard difficulty
-* 🏆 Winner detection
-* 📊 Match score tracking
-* 🔁 Play again option
-* 🥉 Best of 3 mode
-* 🏅 Best of 5 mode
-* ❌ Invalid input handling
-* 📈 Game statistics
-* 📊 Win-rate calculation
-* 💾 Save statistics to `stats.txt`
-* 🔄 Load previous statistics automatically
-* 📜 Game history
-* 📖 Rules section
-* 🏠 Main menu
-* 🔄 Reset statistics
-* 🔥 Current win streak
-* 🏆 Best win streak
-* 🎖️ Achievement system
-* ⭐ XP system
-* 🎮 Player levels
-* 🆙 Level-up system
-* 🚪 Exit option
+This project demonstrates practical C programming concepts through a complete console-based game.
 
 ---
 
-# 🆕 Latest Feature — Difficulty Levels & Smarter AI
+## 🎮 Features
 
-The computer opponent now has **three difficulty levels**.
+### Basic Gameplay
 
-```text
-1. Easy
-2. Medium
-3. Hard
-```
+* Stone, Paper and Scissors
+* Player vs Computer
+* Random computer moves
+* Winner detection
+* Round scoring
+* Draw detection
+* Invalid input handling
 
-The difficulty is selected before every match.
+### 👤 Player System
 
----
+* Enter player name
+* Personalized game messages
+* Persistent player statistics
 
-# 🤖 Difficulty System
+### 🏆 Game Modes
 
-## 🟢 Easy
+* Best of 3
+* Best of 5
+* Play Again option
 
-The computer makes a completely random choice.
+### 📊 Statistics
 
-```text
-Random = 100%
-Counter = 0%
-```
+Tracks:
 
-This mode is suitable for beginners.
-
----
-
-## 🟡 Medium
-
-The computer has:
-
-```text
-50% chance → Random move
-50% chance → Counter player's move
-```
-
-Example:
-
-```text
-Player → Stone
-Computer → Paper
-```
-
-The computer does not counter every round, making Medium more balanced.
-
----
-
-## 🔴 Hard
-
-The computer has:
-
-```text
-75% chance → Counter player's move
-25% chance → Random move
-```
-
-Example:
-
-```text
-Player → Paper
-Computer → Scissors
-```
-
-Hard mode is designed to be much more challenging.
-
-The computer does not always counter, preventing the game from becoming completely predictable.
-
----
-
-# 🧠 Computer AI Logic
-
-The AI is implemented using the function:
-
-```c
-int getComputerMove(int player, int difficulty);
-```
-
-The function receives:
-
-* Player's move
-* Selected difficulty
-
-and returns the computer's move.
-
-### Counter Logic
-
-| Player      | Computer Counter |
-| ----------- | ---------------- |
-| 🪨 Stone    | 📄 Paper         |
-| 📄 Paper    | ✂️ Scissors      |
-| ✂️ Scissors | 🪨 Stone         |
-
----
-
-# 🎮 Game Flow
-
-The current game flow is:
-
-```text
-Start Game
-    ↓
-Choose Difficulty
-    ↓
-Choose Best of 3 / Best of 5
-    ↓
-Choose Stone / Paper / Scissors
-    ↓
-Computer AI selects move
-    ↓
-Round Result
-    ↓
-Match Result
-    ↓
-XP / Level / Streak Update
-    ↓
-Save Statistics
-```
-
----
-
-# ⭐ XP System
-
-Players receive XP after each match.
-
-| Action  |      XP |
-| ------- | ------: |
-| 🏆 Win  | +100 XP |
-| 💻 Lose |  -25 XP |
-
-XP cannot go below `0`.
-
----
-
-# 🎖️ Level System
-
-Players start at:
-
-```text
-Level 1
-XP 0
-```
-
-Every `500 XP` increases the player's level.
-
-```text
-0 XP       → Level 1
-500 XP     → Level 2
-1000 XP    → Level 3
-1500 XP    → Level 4
-2000 XP    → Level 5
-```
-
----
-
-# 🔥 Win Streak
-
-The game tracks consecutive match victories.
-
-Example:
-
-```text
-Win → Win → Win
-
-Current Streak: 3
-```
-
-A loss resets the current streak.
-
-The highest streak is permanently saved as the **Best Streak**.
-
----
-
-# 🏆 Achievements
-
-The current achievement system includes:
-
-| Achievement      | Requirement                  |
-| ---------------- | ---------------------------- |
-| 🏆 First Victory | Win 1 match                  |
-| 🔥 3-Win Streak  | Win 3 matches consecutively  |
-| 🔥 5-Win Streak  | Win 5 matches consecutively  |
-| 🔥 10-Win Streak | Win 10 matches consecutively |
-| ⭐ Level 5        | Reach Level 5                |
-| 👑 Level 10      | Reach Level 10               |
-
-Achievements can be viewed from:
-
-```text
-5. Achievements
-```
-
----
-
-# 📊 Statistics
-
-The Statistics section displays:
-
-* Total matches
+* Total Matches
 * Wins
 * Losses
-* Win rate
-* Current streak
-* Best streak
+* Win Rate
+* Current Win Streak
+* Best Win Streak
 * XP
-* Level
+* Player Level
 
-Example:
+### 💾 Persistent Data
+
+Player statistics are saved in:
 
 ```text
-=================================
-          STATISTICS
-=================================
-
-Player: Alex
-Matches: 10
-Wins: 7
-Losses: 3
-Win Rate: 70.00%
-Current Win Streak: 3
-Best Win Streak: 5
-XP: 675
-Level: 2
-
-XP needed for next level: 325
+stats.txt
 ```
+
+Statistics are automatically loaded when the program starts.
 
 ---
 
-# 📜 Game History
+## 📜 Game History
 
-Every completed match is saved to:
+Every match is stored in:
 
 ```text
 game_history.txt
 ```
 
-The history includes:
+The history contains:
 
 * Player name
 * Difficulty
 * Game mode
 * Round results
 * Final score
-* Final result
 * Current streak
-* Player level
-* Player XP
+* XP
+* Level
+
+---
+
+## 🤖 Difficulty-Based Computer AI
+
+The computer has three difficulty levels.
+
+### Easy
+
+```text
+100% Random
+```
+
+The computer chooses Stone, Paper or Scissors randomly.
+
+### Medium
+
+```text
+50% Random
+50% Counter Player
+```
+
+The computer has a 50% chance of choosing a random move and a 50% chance of choosing the move that beats the player's choice.
+
+### Hard
+
+```text
+75% Counter Player
+25% Random
+```
+
+The computer usually counters the player's move but still has a 25% chance of making a random move.
+
+### Counter System
+
+| Player Move | Computer Counter |
+| ----------- | ---------------- |
+| Stone       | Paper            |
+| Paper       | Scissors         |
+| Scissors    | Stone            |
+
+The AI is implemented using:
+
+```c
+getComputerMove(int player, int difficulty)
+```
+
+---
+
+## ⭐ XP & Level System
+
+The game includes a progression system.
+
+### XP Rewards
+
+| Event      |      XP |
+| ---------- | ------: |
+| Match Win  | +100 XP |
+| Match Loss |  -25 XP |
+
+XP cannot fall below zero.
+
+### Level Formula
+
+```text
+Level = (XP / 500) + 1
+```
+
+Therefore:
+
+```text
+0–499 XP     → Level 1
+500–999 XP   → Level 2
+1000–1499 XP → Level 3
+1500–1999 XP → Level 4
+```
+
+---
+
+## 🔥 Win Streak System
+
+The game tracks consecutive match victories.
+
+It stores:
+
+* Current Win Streak
+* Best Win Streak
+
+A loss resets the current streak.
+
+---
+
+## 🏅 Achievements
+
+The game includes several achievements.
+
+### Available Achievements
+
+* 🥇 First Victory
+* 🔥 3-Win Streak
+* 🔥 5-Win Streak
+* 🔥 10-Win Streak
+* ⭐ Level 5
+* ⭐ Level 10
+
+Achievements are automatically shown as:
+
+```text
+[UNLOCKED]
+```
+
+or
+
+```text
+[LOCKED]
+```
+
+---
+
+# 🏆 Leaderboard System
+
+## Feature 13
+
+The game now includes a persistent **Top 10 Leaderboard**.
+
+Players are ranked based on their total XP.
+
+### Leaderboard Displays
+
+* Rank
+* Player Name
+* XP
+* Level
+* Wins
+* Best Streak
 
 Example:
 
 ```text
-=================================
-Player: Alex
-Difficulty: Hard
-Mode: Best of 3
-=================================
+===============================================================
+                     LEADERBOARD
+===============================================================
+Rank  Player                XP       Level    Wins     Streak
+---------------------------------------------------------------
+1     Dushyant              1200     3        13       5
+2     Alex                  900      2        10       4
+3     Rahul                 650      2        8        3
+===============================================================
+```
 
-Round: YOU WIN
-Round: COMPUTER WINS
-Round: YOU WIN
-Round: YOU WIN
+### Leaderboard Storage
 
-FINAL RESULT: Alex WON
-Final Score: Alex 2 - Computer 1
-Current Streak: 3
-Level: 2
-XP: 675
+Leaderboard data is permanently stored in:
+
+```text
+leaderboard.txt
+```
+
+The leaderboard automatically:
+
+1. Loads existing players
+2. Finds the current player
+3. Updates their statistics
+4. Adds new players
+5. Sorts players by XP
+6. Keeps the Top 10
+7. Saves the updated leaderboard
+
+---
+
+## 🧠 Leaderboard Algorithm
+
+Players are stored using a C structure:
+
+```c
+struct Player {
+    char name[50];
+    int wins;
+    int losses;
+    int xp;
+    int level;
+    int bestStreak;
+};
+```
+
+The program uses:
+
+```c
+qsort()
+```
+
+to sort players according to XP.
+
+The player with the highest XP receives:
+
+```text
+Rank 1
 ```
 
 ---
 
-# 💾 Persistent Statistics
+## 🖥️ Main Menu
 
-Player progress is saved to:
-
-```text
-stats.txt
-```
-
-Saved information includes:
-
-```text
-Player
-Matches
-Wins
-Losses
-Win Rate
-Current Streak
-Best Streak
-XP
-Level
-```
-
-When the game starts, the `loadStatistics()` function restores the previous progress.
-
----
-
-# 🏠 Main Menu
-
-The current main menu is:
+The current main menu contains:
 
 ```text
 =================================
@@ -353,63 +288,54 @@ The current main menu is:
 3. Game History
 4. Rules
 5. Achievements
-6. Reset Statistics
-7. Exit
+6. Leaderboard
+7. Reset Statistics
+8. Exit
 ```
 
 ---
 
-# 📖 Rules
-
-| Choice      | Beats       |
-| ----------- | ----------- |
-| 🪨 Stone    | ✂️ Scissors |
-| 📄 Paper    | 🪨 Stone    |
-| ✂️ Scissors | 📄 Paper    |
-
-Same choices result in a draw.
-
----
-
-# 🏆 Game Modes
-
-## Best of 3
-
-First player to reach 2 round wins wins the match.
+## 🔄 Game Flow
 
 ```text
-Winning Score = 2
-```
-
-## Best of 5
-
-First player to reach 3 round wins wins the match.
-
-```text
-Winning Score = 3
+Start Program
+      ↓
+Enter Player Name
+      ↓
+Load Previous Statistics
+      ↓
+Main Menu
+      ↓
+Choose Play Game
+      ↓
+Select Difficulty
+      ↓
+Select Best of 3 / Best of 5
+      ↓
+Choose Stone / Paper / Scissors
+      ↓
+Computer AI
+      ↓
+Round Result
+      ↓
+Match Result
+      ↓
+Update XP
+      ↓
+Update Level
+      ↓
+Update Win Streak
+      ↓
+Save Statistics
+      ↓
+Update Leaderboard
+      ↓
+Play Again / Main Menu
 ```
 
 ---
 
-# 🔄 Reset Statistics
-
-Resetting statistics clears:
-
-```text
-Matches = 0
-Wins = 0
-Losses = 0
-Current Streak = 0
-Best Streak = 0
-XP = 0
-Level = 1
-```
-
-A confirmation is required before resetting.
-
----
-
-# 📁 Project Structure
+## 📁 Project Structure
 
 ```text
 stpgame/
@@ -417,84 +343,34 @@ stpgame/
 ├── stone_paper.c
 ├── README.md
 ├── stats.txt
-└── game_history.txt
+├── game_history.txt
+└── leaderboard.txt
 ```
 
-| File               | Purpose                |
-| ------------------ | ---------------------- |
-| `stone_paper.c`    | Main game source code  |
-| `README.md`        | Project documentation  |
-| `stats.txt`        | Stores player progress |
-| `game_history.txt` | Stores match history   |
+### File Description
+
+| File               | Purpose                    |
+| ------------------ | -------------------------- |
+| `stone_paper.c`    | Main C source code         |
+| `README.md`        | Project documentation      |
+| `stats.txt`        | Personal player statistics |
+| `game_history.txt` | Match and round history    |
+| `leaderboard.txt`  | Top 10 player leaderboard  |
 
 ---
 
-# 🛠️ Technologies Used
+## ⚙️ Requirements
 
-* **C Programming**
-* GCC Compiler
-* Standard C libraries:
-
-  * `stdio.h`
-  * `stdlib.h`
-  * `time.h`
-  * `string.h`
+* C Compiler
+* GCC / MinGW / MSYS2
+* Windows, Linux or macOS
+* Terminal / Command Prompt
 
 ---
 
-# 🧠 C Concepts Used
+## 🛠️ Compilation
 
-This project demonstrates:
-
-* Variables
-* Data types
-* `if-else`
-* `switch`
-* `do-while`
-* Functions
-* Function parameters
-* Pointers
-* Arrays
-* Strings
-* Random number generation
-* File handling
-* `fopen()`
-* `fprintf()`
-* `sscanf()`
-* `fgets()`
-* `fclose()`
-* Persistent data
-* Menu-driven programming
-* Randomized algorithms
-* Basic AI logic
-* Game progression systems
-
----
-
-# 📚 What I Learned
-
-Through this project I practiced:
-
-* Creating functions
-* Passing variables using pointers
-* Working with strings
-* Generating random numbers
-* Reading and writing files
-* Saving and loading application data
-* Building menu-driven applications
-* Tracking statistics
-* Implementing win streaks
-* Creating achievements
-* Implementing XP and levels
-* Designing simple game AI
-* Using probability to create difficulty levels
-* Separating AI logic into its own function
-
----
-
-# ▶️ How to Compile
-
-Open the terminal inside the project folder:
+Using GCC:
 
 ```bash
 gcc stone_paper.c -o stone_paper.exe
@@ -502,42 +378,82 @@ gcc stone_paper.c -o stone_paper.exe
 
 ---
 
-# ▶️ How to Run
+## ▶️ Run
 
-In PowerShell:
+### PowerShell
 
 ```powershell
 .\stone_paper.exe
 ```
 
+### Linux/macOS
+
+```bash
+./stone_paper
+```
+
 ---
 
-# 🚀 Future Improvements
+## 📚 C Concepts Used
+
+This project demonstrates:
+
+* Variables
+* Data types
+* Operators
+* Conditional statements
+* `if-else`
+* `switch`
+* Loops
+* Functions
+* Arrays
+* Strings
+* Structures
+* Pointers
+* File handling
+* `fopen()`
+* `fclose()`
+* `fprintf()`
+* `fscanf()`
+* `fgets()`
+* `sscanf()`
+* Random number generation
+* `rand()`
+* `srand()`
+* `time()`
+* String handling
+* Sorting
+* `qsort()`
+* Persistent data
+* Randomized algorithms
+* Basic AI logic
+* Progression systems
+* Leaderboard algorithms
+
+---
+
+## 🚀 Future Improvements
 
 Possible future features:
 
-* 👥 Two-player mode
-* 🏆 Leaderboard
-* 🤖 More advanced adaptive AI
-* 🎮 Tournament mode
-* 👤 Multiple player profiles
-* ⚙️ Settings menu
-* 🎨 Colored console interface
-* 📅 Date and time in history
-* 📈 Advanced statistics
-* 💰 Coins/reward system
-* 🛍️ Unlockable themes
-* 🎵 Sound effects
-* ⏱️ Timed challenge mode
-* 🌐 Online multiplayer
+* 👥 Two-Player Mode
+* 🏆 Advanced Leaderboard
+* 🏟️ Tournament Mode
+* 👤 Multiple Player Profiles
+* ⚙️ Game Settings
+* 🎨 Colored Console Interface
+* 🕒 Date & Time in Game History
+* 📊 Advanced Statistics
+* 🪙 Coins and Rewards
+* 🎵 Sound Effects
+* ⏱️ Timed Challenge Mode
+* 🌐 Online Multiplayer
+* 🧠 Adaptive AI
+* 🎖️ More Achievements
 
 ---
 
-# 📌 Project Status
-
-**Current Version: Feature 12**
-
-The project has evolved from a basic Stone Paper Scissors game into a progressively developed console application:
+## 📈 Project Progress
 
 ```text
 Basic Gameplay
@@ -558,7 +474,7 @@ Persistent Statistics
       ↓
 Win Streak
       ↓
-Achievement System
+Achievements
       ↓
 XP System
       ↓
@@ -567,18 +483,18 @@ Level System
 Difficulty Levels
       ↓
 Smarter Computer AI
+      ↓
+🏆 Leaderboard System
 ```
+
+### Current Version
+
+**Feature 13 — Leaderboard System**
 
 ---
 
-# 👨‍💻 Author
+## 👨‍💻 Author
 
 **Dushyant Kumar**
 
-Built as a C programming project while learning programming fundamentals and software development.
-
----
-
-# 📄 License
-
-This project is open for learning and educational purposes.
+Built as a learning project to improve practical C programming, problem-solving, file handling, algorithms, and software development skills.
