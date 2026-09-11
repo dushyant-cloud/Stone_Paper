@@ -1,6 +1,6 @@
 # 🪨📄✂️ Stone Paper Scissors
 
-A beginner-friendly **Stone Paper Scissors game written in C**, progressively upgraded with game modes, player statistics, persistent data, game history, achievements, XP, levels, difficulty-based AI, and a persistent leaderboard system.
+A beginner-friendly **Stone Paper Scissors game written in C**, progressively upgraded with game modes, player statistics, persistent data, game history, achievements, XP, levels, difficulty-based AI, a leaderboard system, and two-player gameplay.
 
 This project demonstrates practical C programming concepts through a complete console-based game.
 
@@ -28,51 +28,41 @@ This project demonstrates practical C programming concepts through a complete co
 
 * Best of 3
 * Best of 5
-* Play Again option
+* Play Again
+* **Two Player Mode**
 
-### 📊 Statistics
+### 👥 Two Player Mode
 
-Tracks:
+Feature 15 adds local multiplayer gameplay.
 
-* Total Matches
-* Wins
-* Losses
-* Win Rate
-* Current Win Streak
-* Best Win Streak
-* XP
-* Player Level
+Two players can enter their names and compete against each other.
 
-### 💾 Persistent Data
-
-Player statistics are saved in:
+Example:
 
 ```text
-stats.txt
+Player 1: Dushyant
+Player 2: Rahul
 ```
 
-Statistics are automatically loaded when the program starts.
-
----
-
-## 📜 Game History
-
-Every match is stored in:
+Both players independently select:
 
 ```text
-game_history.txt
+1. Stone
+2. Paper
+3. Scissors
 ```
 
-The history contains:
+The game then reveals both choices and determines the round winner.
 
-* Player name
-* Difficulty
-* Game mode
-* Round results
-* Final score
-* Current streak
-* XP
-* Level
+### Two Player Game Modes
+
+* Best of 3
+* Best of 5
+* Draw detection
+* Round scoring
+* Final match winner
+* Match history
+* Play another match
 
 ---
 
@@ -95,16 +85,12 @@ The computer chooses Stone, Paper or Scissors randomly.
 50% Counter Player
 ```
 
-The computer has a 50% chance of choosing a random move and a 50% chance of choosing the move that beats the player's choice.
-
 ### Hard
 
 ```text
 75% Counter Player
 25% Random
 ```
-
-The computer usually counters the player's move but still has a 25% chance of making a random move.
 
 ### Counter System
 
@@ -122,9 +108,58 @@ getComputerMove(int player, int difficulty)
 
 ---
 
-## ⭐ XP & Level System
+## 📊 Statistics
 
-The game includes a progression system.
+The computer-game profile tracks:
+
+* Total Matches
+* Wins
+* Losses
+* Win Rate
+* Current Win Streak
+* Best Win Streak
+* XP
+* Player Level
+
+Statistics are stored in:
+
+```text
+stats.txt
+```
+
+---
+
+## 📜 Game History
+
+All matches are stored in:
+
+```text
+game_history.txt
+```
+
+The history contains information about:
+
+* Player name
+* Difficulty
+* Game mode
+* Round results
+* Final score
+* Current streak
+* XP
+* Level
+
+Two-player matches are also saved with:
+
+* Player 1 name
+* Player 2 name
+* Game mode
+* Round winners
+* Final winner
+* Final score
+
+---
+
+## ⭐ XP & Level System
 
 ### XP Rewards
 
@@ -133,28 +168,26 @@ The game includes a progression system.
 | Match Win  | +100 XP |
 | Match Loss |  -25 XP |
 
-XP cannot fall below zero.
-
 ### Level Formula
 
 ```text
 Level = (XP / 500) + 1
 ```
 
-Therefore:
+Example:
 
 ```text
-0–499 XP     → Level 1
-500–999 XP   → Level 2
-1000–1499 XP → Level 3
-1500–1999 XP → Level 4
+0–499 XP       → Level 1
+500–999 XP     → Level 2
+1000–1499 XP   → Level 3
+1500–1999 XP   → Level 4
 ```
 
 ---
 
 ## 🔥 Win Streak System
 
-The game tracks consecutive match victories.
+The game tracks consecutive victories.
 
 It stores:
 
@@ -167,9 +200,7 @@ A loss resets the current streak.
 
 ## 🏅 Achievements
 
-The game includes several achievements.
-
-### Available Achievements
+Available achievements:
 
 * 🥇 First Victory
 * 🔥 3-Win Streak
@@ -178,27 +209,13 @@ The game includes several achievements.
 * ⭐ Level 5
 * ⭐ Level 10
 
-Achievements are automatically shown as:
-
-```text
-[UNLOCKED]
-```
-
-or
-
-```text
-[LOCKED]
-```
-
 ---
 
-# 🏆 Leaderboard System
+# 🏆 Leaderboard
 
-## Feature 13
+The project includes a persistent **Top 10 Leaderboard**.
 
-The game now includes a persistent **Top 10 Leaderboard**.
-
-Players are ranked based on their total XP.
+Players are ranked according to XP.
 
 ### Leaderboard Displays
 
@@ -209,43 +226,23 @@ Players are ranked based on their total XP.
 * Wins
 * Best Streak
 
-Example:
-
-```text
-===============================================================
-                     LEADERBOARD
-===============================================================
-Rank  Player                XP       Level    Wins     Streak
----------------------------------------------------------------
-1     Dushyant              1200     3        13       5
-2     Alex                  900      2        10       4
-3     Rahul                 650      2        8        3
-===============================================================
-```
-
-### Leaderboard Storage
-
-Leaderboard data is permanently stored in:
+Leaderboard data is stored in:
 
 ```text
 leaderboard.txt
 ```
 
-The leaderboard automatically:
+The program uses:
 
-1. Loads existing players
-2. Finds the current player
-3. Updates their statistics
-4. Adds new players
-5. Sorts players by XP
-6. Keeps the Top 10
-7. Saves the updated leaderboard
+```c
+qsort()
+```
+
+to rank players by XP.
 
 ---
 
-## 🧠 Leaderboard Algorithm
-
-Players are stored using a C structure:
+## 🧠 C Structure Used for Leaderboard
 
 ```c
 struct Player {
@@ -258,18 +255,34 @@ struct Player {
 };
 ```
 
-The program uses:
+---
 
-```c
-qsort()
-```
+## 👥 Two Player Architecture
 
-to sort players according to XP.
-
-The player with the highest XP receives:
+The Two Player Mode uses separate variables for both players:
 
 ```text
-Rank 1
+Player 1
+   ↓
+Choose Move
+   ↓
+Player 2
+   ↓
+Choose Move
+   ↓
+Compare Moves
+   ↓
+Round Winner
+   ↓
+Update Score
+   ↓
+Match Winner
+```
+
+The two-player mode is implemented using:
+
+```c
+twoPlayerMode()
 ```
 
 ---
@@ -284,18 +297,19 @@ The current main menu contains:
 =================================
 
 1. Play Game
-2. Statistics
-3. Game History
-4. Rules
-5. Achievements
-6. Leaderboard
-7. Reset Statistics
-8. Exit
+2. Two Player Mode
+3. Statistics
+4. Game History
+5. Rules
+6. Achievements
+7. Leaderboard
+8. Reset Statistics
+9. Exit
 ```
 
 ---
 
-## 🔄 Game Flow
+## 🔄 Complete Game Flow
 
 ```text
 Start Program
@@ -306,31 +320,29 @@ Load Previous Statistics
       ↓
 Main Menu
       ↓
-Choose Play Game
-      ↓
-Select Difficulty
-      ↓
-Select Best of 3 / Best of 5
-      ↓
-Choose Stone / Paper / Scissors
-      ↓
-Computer AI
-      ↓
-Round Result
-      ↓
-Match Result
-      ↓
-Update XP
-      ↓
-Update Level
-      ↓
-Update Win Streak
-      ↓
+ ┌───────────────┬────────────────┐
+ ↓               ↓
+Play Game     Two Player Mode
+ ↓               ↓
+Difficulty     Player Names
+ ↓               ↓
+Best of 3/5    Best of 3/5
+ ↓               ↓
+Player Move    P1 + P2 Moves
+ ↓               ↓
+Computer AI    Compare Moves
+ ↓               ↓
+Round Result   Round Result
+ ↓               ↓
+Match Result   Match Result
+ ↓               ↓
+XP / Level     Save History
+ ↓
+Streak
+ ↓
 Save Statistics
-      ↓
+ ↓
 Update Leaderboard
-      ↓
-Play Again / Main Menu
 ```
 
 ---
@@ -347,15 +359,13 @@ stpgame/
 └── leaderboard.txt
 ```
 
-### File Description
-
-| File               | Purpose                    |
-| ------------------ | -------------------------- |
-| `stone_paper.c`    | Main C source code         |
-| `README.md`        | Project documentation      |
-| `stats.txt`        | Personal player statistics |
-| `game_history.txt` | Match and round history    |
-| `leaderboard.txt`  | Top 10 player leaderboard  |
+| File               | Purpose                |
+| ------------------ | ---------------------- |
+| `stone_paper.c`    | Main C source code     |
+| `README.md`        | Project documentation  |
+| `stats.txt`        | Personal statistics    |
+| `game_history.txt` | Game and match history |
+| `leaderboard.txt`  | Top 10 leaderboard     |
 
 ---
 
@@ -380,7 +390,7 @@ gcc stone_paper.c -o stone_paper.exe
 
 ## ▶️ Run
 
-### PowerShell
+### Windows PowerShell
 
 ```powershell
 .\stone_paper.exe
@@ -427,6 +437,7 @@ This project demonstrates:
 * Persistent data
 * Randomized algorithms
 * Basic AI logic
+* Multiplayer game logic
 * Progression systems
 * Leaderboard algorithms
 
@@ -436,20 +447,17 @@ This project demonstrates:
 
 Possible future features:
 
-* 👥 Two-Player Mode
-* 🏆 Advanced Leaderboard
 * 🏟️ Tournament Mode
+* 📊 Advanced Statistics
 * 👤 Multiple Player Profiles
 * ⚙️ Game Settings
-* 🎨 Colored Console Interface
 * 🕒 Date & Time in Game History
-* 📊 Advanced Statistics
 * 🪙 Coins and Rewards
+* 🎨 Colored Console Interface
 * 🎵 Sound Effects
 * ⏱️ Timed Challenge Mode
-* 🌐 Online Multiplayer
 * 🧠 Adaptive AI
-* 🎖️ More Achievements
+* 🌐 Online Multiplayer
 
 ---
 
@@ -484,12 +492,14 @@ Difficulty Levels
       ↓
 Smarter Computer AI
       ↓
-🏆 Leaderboard System
+Leaderboard
+      ↓
+👥 Two Player Mode
 ```
 
 ### Current Version
 
-**Feature 13 — Leaderboard System**
+**Feature 15 — Two Player Mode**
 
 ---
 
@@ -497,4 +507,4 @@ Smarter Computer AI
 
 **Dushyant Kumar**
 
-Built as a learning project to improve practical C programming, problem-solving, file handling, algorithms, and software development skills.
+Built as a learning project to improve practical C programming, problem-solving, file handling, algorithms, AI logic, and software development skills.
