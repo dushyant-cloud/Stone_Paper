@@ -60,3 +60,15 @@ Final Score: Debu 1 - Computer 2
 Current Streak: 0
 Level: 1
 XP: 0
+
+=================================
+TWO PLAYER MATCH
+Player 1: d
+Player 2: R
+Mode: Best of 3
+=================================
+Round Winner: d
+Round Winner: d
+FINAL WINNER: d
+Final Score: d 2 - R 0
+=================================
