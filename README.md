@@ -2,7 +2,7 @@
 
 A feature-rich **Stone Paper Scissors game built in C**.
 
-This project started as a simple console-based game and has gradually evolved into a complete game system with profiles, statistics, XP, levels, achievements, AI difficulty, leaderboards, multiplayer and tournaments.
+This project started as a simple console-based game and has gradually evolved into a complete game system with player profiles, persistent statistics, XP, levels, achievements, AI difficulty, leaderboards, multiplayer, tournaments and an advanced statistics dashboard.
 
 ---
 
@@ -13,44 +13,58 @@ This project started as a simple console-based game and has gradually evolved in
 * 🪨 Stone
 * 📄 Paper
 * ✂️ Scissors
-* Random computer moves
+* Computer opponent
 * Best of 3
 * Best of 5
 * Round-by-round scoring
-* Play against computer
+* Match results
 
-### 👤 Player Profiles
+---
 
-* Create player profiles
+## 👤 Player Profiles
+
+* Create profiles
 * Select active profile
-* Multiple profiles
+* Multiple player profiles
 * Persistent profile data
 * Individual statistics
 * Individual XP
 * Individual levels
-* Individual win streaks
-* Individual best streak
-* Persistent profiles using `profiles.txt`
+* Individual streaks
+* Individual achievements
 
-### 🤖 Computer AI
+Profile data is saved in:
 
-Three difficulty levels:
+```text
+profiles.txt
+```
 
-**Easy**
+---
 
-* Completely random moves
+## 🤖 Computer AI
 
-**Medium**
+Three difficulty levels are available.
 
-* Combination of random moves and counters
+### Easy
 
-**Hard**
+Completely random computer moves.
 
-* Higher probability of countering the player's move
+### Medium
 
-### 📊 Statistics
+Uses a combination of:
 
-Each player profile stores:
+* Random moves
+* Counter moves
+
+### Hard
+
+Uses a higher probability of countering the player's move.
+
+---
+
+## 📊 Statistics
+
+Each player has their own statistics:
 
 * Matches played
 * Wins
@@ -61,19 +75,69 @@ Each player profile stores:
 * XP
 * Level
 
-### 🔥 Win Streak System
+---
 
-* Current win streak
-* Best win streak
-* Streak achievements
-* Streak data saved permanently
+# 📈 Advanced Statistics Dashboard
 
-### ⭐ XP & Level System
+### Feature 18
+
+A dedicated statistics dashboard provides a detailed overview of the player's performance.
+
+The dashboard includes:
+
+* 🎮 Matches played
+* 🏆 Total wins
+* ❌ Total losses
+* 📈 Win rate
+* 📉 Loss rate
+* 🔥 Current streak
+* 🔥 Best streak
+* 🤖 Computer wins
+* 🤖 Computer losses
+* 👥 Two-player wins
+* 🏆 Tournament wins
+* ⭐ Current XP
+* ⭐ Highest XP
+* 📊 Current level
+* ⏭️ XP required for next level
+
+Example:
+
+```text
+╔══════════════════════════════════════════╗
+║       📊 ADVANCED STATISTICS             ║
+╠══════════════════════════════════════════╣
+║ Player          : Dushyant               ║
+║ Level           : 7                      ║
+║ XP              : 3425                   ║
+║ Highest XP      : 3500                   ║
+╠══════════════════════════════════════════╣
+║ Matches Played  : 42                     ║
+║ Total Wins      : 29                     ║
+║ Total Losses    : 13                     ║
+║ Win Rate        : 69.05%                 ║
+║ Loss Rate       : 30.95%                 ║
+╠══════════════════════════════════════════╣
+║ Current Streak  : 4                      ║
+║ Best Streak     : 9                      ║
+╠══════════════════════════════════════════╣
+║ Computer Wins   : 29                     ║
+║ Computer Losses : 13                     ║
+║ 2P Wins         : 3                      ║
+║ Tournament Wins : 2                      ║
+╚══════════════════════════════════════════╝
+```
+
+---
+
+# ⭐ XP & Level System
 
 Players earn:
 
-* **+100 XP** for winning a match
-* **-25 XP** for losing a match
+```text
+Match Win  → +100 XP
+Match Loss → -25 XP
+```
 
 Level calculation:
 
@@ -81,22 +145,41 @@ Level calculation:
 Level = (XP / 500) + 1
 ```
 
-### 🏆 Achievements
+The game also tracks the player's highest XP value.
+
+---
+
+# 🔥 Win Streak System
+
+The game tracks:
+
+* Current win streak
+* Best win streak
+
+Winning consecutive matches increases the current streak.
+
+Losing resets the current streak.
+
+---
+
+# 🏆 Achievements
 
 Current achievements include:
 
-* First Victory
-* 3 Win Streak
-* 5 Win Streak
-* 10 Win Streak
-* Level 5
-* Level 10
+* 🏆 First Victory
+* 🔥 3 Win Streak
+* 🔥 5 Win Streak
+* 🔥 10 Win Streak
+* ⭐ Level 5
+* 👑 Level 10
 
-### 🏅 Leaderboard
+---
 
-The game maintains a persistent leaderboard.
+# 🏅 Leaderboard
 
-Leaderboard includes:
+The game maintains a persistent top-10 leaderboard.
+
+Leaderboard displays:
 
 * Rank
 * Player
@@ -105,32 +188,35 @@ Leaderboard includes:
 * Wins
 * Best streak
 
-The top 10 players are displayed.
-
 Leaderboard data is stored in:
 
 ```text
 leaderboard.txt
 ```
 
-### 👥 Two Player Mode
+Players are sorted by XP.
 
-Play locally with another player.
+---
+
+# 👥 Two Player Mode
+
+Local multiplayer mode allows two players to compete.
 
 Features:
 
 * Player 1 vs Player 2
 * Best of 3
 * Best of 5
-* Hidden player choices
-* Independent scoring
+* Hidden choices
+* Round scoring
 * Match history
+* Two-player statistics
 
-### 🏆 Tournament Mode
+---
+
+# 🏆 Tournament Mode
 
 Four-player elimination tournament.
-
-Structure:
 
 ```text
 Player 1 ──┐
@@ -145,18 +231,19 @@ Player 4 ──┘
 Includes:
 
 * 4 players
-* Semi-finals
+* Two semi-finals
 * Final
 * Best of 3
 * Best of 5
 * Tournament champion
+* Tournament statistics
 * Tournament history
 
-### 💾 Persistent Data
+---
 
-The game automatically stores important information.
+# 💾 Persistent Data
 
-Files:
+The project uses file handling to save data.
 
 ```text
 profiles.txt
@@ -164,7 +251,17 @@ leaderboard.txt
 game_history.txt
 ```
 
-This means your player progress remains available after closing the program.
+### profiles.txt
+
+Stores player profiles and statistics.
+
+### leaderboard.txt
+
+Stores leaderboard data.
+
+### game_history.txt
+
+Stores previous match results.
 
 ---
 
@@ -181,7 +278,7 @@ stpgame/
 └── README.md
 ```
 
-> `.txt` files are generated automatically when the game saves data.
+The `.txt` files are generated automatically when the game saves data.
 
 ---
 
@@ -193,21 +290,22 @@ stpgame/
 3. Two Player Mode
 4. Tournament Mode
 5. Statistics
-6. Game History
-7. Rules
-8. Achievements
-9. Leaderboard
-10. Reset Profile Statistics
-11. Exit
+6. Advanced Statistics Dashboard
+7. Game History
+8. Rules
+9. Achievements
+10. Leaderboard
+11. Reset Profile Statistics
+12. Exit
 ```
 
 ---
 
-# ⚙️ How to Compile
+# ⚙️ Compilation
 
 Make sure GCC is installed.
 
-Open the terminal inside the project folder and run:
+Open a terminal in the project directory:
 
 ```bash
 gcc stone_paper.c -o stone_paper.exe
@@ -215,7 +313,7 @@ gcc stone_paper.c -o stone_paper.exe
 
 ---
 
-# ▶️ How to Run
+# ▶️ Running the Game
 
 ### Windows PowerShell
 
@@ -223,7 +321,7 @@ gcc stone_paper.c -o stone_paper.exe
 .\stone_paper.exe
 ```
 
-### CMD
+### Windows CMD
 
 ```cmd
 stone_paper.exe
@@ -231,36 +329,40 @@ stone_paper.exe
 
 ---
 
-# 🧠 Concepts Used
+# 🧠 C Programming Concepts Used
 
-This project demonstrates several important C programming concepts:
+This project demonstrates:
 
 * Variables
 * Data types
-* `if/else`
+* Conditional statements
 * `switch`
 * Loops
 * Functions
 * Arrays
 * Strings
 * Structures
+* `typedef`
 * Pointers
 * File handling
-* `struct`
-* `typedef`
+* `fopen()`
+* `fprintf()`
+* `fscanf()`
+* `fgets()`
+* `fclose()`
 * `qsort()`
 * Random number generation
+* `rand()`
+* `srand()`
 * `time()`
-* Modular programming
 * Persistent data storage
 * Basic AI logic
-* Menu-driven applications
+* Menu-driven programming
+* Statistics calculations
 
 ---
 
 # 📈 Project Progression
-
-The project was developed incrementally:
 
 ```text
 1.  Basic Stone Paper Scissors
@@ -282,6 +384,7 @@ The project was developed incrementally:
 17. Two Player Mode
 18. Tournament Mode
 19. Player Profiles
+20. Advanced Statistics Dashboard
 ```
 
 ---
@@ -290,19 +393,18 @@ The project was developed incrementally:
 
 Possible future features:
 
-* 🎨 Colored console interface
 * 🧠 Adaptive AI that learns player patterns
-* 📊 Advanced statistics
-* 📈 Win-rate graphs
-* 🎮 Custom game settings
-* 💾 Save/load complete game state
-* 🏆 More tournament formats
-* 👤 Profile deletion/rename
+* 🎨 Colored console interface
+* ⚙️ Custom game settings
+* 👤 Profile rename/delete
 * 🔐 Profile PIN/password
-* 🌐 Online multiplayer
-* 🖥️ GUI version
+* 📊 Statistics graphs
+* 🏆 More tournament formats
+* 💾 Complete game-state save/load
 * 🔊 Sound effects
 * 🎵 Background music
+* 🌐 Online multiplayer
+* 🖥️ GUI version
 
 ---
 
@@ -316,24 +418,30 @@ GitHub:
 
 ---
 
-# ⭐ Project Goal
+# 🎯 Project Goal
 
-The goal of this project is to continuously improve a beginner-level C program into a more complete software project while learning:
+The project is being developed feature-by-feature to improve C programming and software development skills.
+
+The progression is:
 
 ```text
-C Programming
-      ↓
-Data Structures
-      ↓
+C Fundamentals
+       ↓
+Functions & Structures
+       ↓
 File Handling
-      ↓
+       ↓
 Game Logic
-      ↓
+       ↓
 AI Logic
-      ↓
+       ↓
 Persistent Data
-      ↓
+       ↓
+Player Profiles
+       ↓
+Statistics
+       ↓
 Software Design
 ```
 
-This project is being developed feature-by-feature as part of my programming portfolio.
+The goal is to turn a simple beginner C game into a polished portfolio project.
