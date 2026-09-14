@@ -87,3 +87,4 @@ Current Streak: 1
 Level: 1
 XP: 100
 Player: Dushyant | Result: LOSS | Score: 1-2
+Player: Dushyant | Result: WIN | Score: 2-1

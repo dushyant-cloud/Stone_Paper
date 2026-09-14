@@ -11,22 +11,52 @@
    PLAYER PROFILE
    ========================= */
 
-typedef struct {
+typedef struct
+{
     char name[NAME_SIZE];
+
     int wins;
     int losses;
     int matches;
+
     int xp;
     int level;
+
     int currentStreak;
     int bestStreak;
+
+    /* Advanced Statistics */
+    int computerWins;
+    int computerLosses;
+
+    int twoPlayerWins;
+    int tournamentWins;
+
+    int highestXP;
 } PlayerProfile;
+
+/* =========================
+   LEADERBOARD STRUCTURE
+   ========================= */
+
+typedef struct
+{
+    char name[NAME_SIZE];
+
+    int wins;
+    int losses;
+    int xp;
+    int level;
+    int bestStreak;
+
+} LeaderboardPlayer;
 
 /* =========================
    GLOBAL VARIABLES
    ========================= */
 
 PlayerProfile profiles[MAX_PLAYERS];
+
 int profileCount = 0;
 int activeProfile = -1;
 
@@ -36,6 +66,7 @@ int activeProfile = -1;
 
 void loadProfiles();
 void saveProfiles();
+
 void createProfile();
 void selectProfile();
 void showProfiles();
@@ -48,9 +79,16 @@ void tournamentMode();
 
 int getComputerMove(int player, int difficulty);
 int getWinnerFromMoves(int player1, int player2);
-int playTournamentMatch(char player1[], char player2[], int bestOf);
+
+int playTournamentMatch(
+    char player1[],
+    char player2[],
+    int bestOf
+);
 
 void showStatistics();
+void showAdvancedStatistics();
+
 void showGameHistory();
 void showRules();
 void showAchievements();
@@ -60,9 +98,17 @@ void showLeaderboard();
 
 void resetProfileStatistics();
 
-void saveHistory(char playerName[], char result[], int score1, int score2);
+void saveHistory(
+    char playerName[],
+    char result[],
+    int score1,
+    int score2
+);
 
-void clearInputBuffer();
+int comparePlayers(
+    const void *a,
+    const void *b
+);
 
 /* =========================
    PROFILE SYSTEM
@@ -77,16 +123,44 @@ void loadProfiles()
 
     profileCount = 0;
 
-    while (profileCount < MAX_PLAYERS &&
-           fscanf(file, " %49[^|]|%d|%d|%d|%d|%d|%d|%d",
-                  profiles[profileCount].name,
-                  &profiles[profileCount].wins,
-                  &profiles[profileCount].losses,
-                  &profiles[profileCount].matches,
-                  &profiles[profileCount].xp,
-                  &profiles[profileCount].level,
-                  &profiles[profileCount].currentStreak,
-                  &profiles[profileCount].bestStreak) == 8)
+    /*
+       New profile format:
+
+       name
+       wins
+       losses
+       matches
+       xp
+       level
+       current streak
+       best streak
+       computer wins
+       computer losses
+       two player wins
+       tournament wins
+       highest XP
+    */
+
+    while (
+        profileCount < MAX_PLAYERS &&
+        fscanf(
+            file,
+            " %49[^|]|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d",
+            profiles[profileCount].name,
+            &profiles[profileCount].wins,
+            &profiles[profileCount].losses,
+            &profiles[profileCount].matches,
+            &profiles[profileCount].xp,
+            &profiles[profileCount].level,
+            &profiles[profileCount].currentStreak,
+            &profiles[profileCount].bestStreak,
+            &profiles[profileCount].computerWins,
+            &profiles[profileCount].computerLosses,
+            &profiles[profileCount].twoPlayerWins,
+            &profiles[profileCount].tournamentWins,
+            &profiles[profileCount].highestXP
+        ) == 13
+    )
     {
         profileCount++;
     }
@@ -106,19 +180,32 @@ void saveProfiles()
 
     for (int i = 0; i < profileCount; i++)
     {
-        fprintf(file, "%s|%d|%d|%d|%d|%d|%d|%d\n",
-                profiles[i].name,
-                profiles[i].wins,
-                profiles[i].losses,
-                profiles[i].matches,
-                profiles[i].xp,
-                profiles[i].level,
-                profiles[i].currentStreak,
-                profiles[i].bestStreak);
+        fprintf(
+            file,
+            "%s|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d\n",
+
+            profiles[i].name,
+            profiles[i].wins,
+            profiles[i].losses,
+            profiles[i].matches,
+            profiles[i].xp,
+            profiles[i].level,
+            profiles[i].currentStreak,
+            profiles[i].bestStreak,
+            profiles[i].computerWins,
+            profiles[i].computerLosses,
+            profiles[i].twoPlayerWins,
+            profiles[i].tournamentWins,
+            profiles[i].highestXP
+        );
     }
 
     fclose(file);
 }
+
+/* =========================
+   CREATE PROFILE
+   ========================= */
 
 void createProfile()
 {
@@ -130,19 +217,20 @@ void createProfile()
 
     char name[NAME_SIZE];
 
-    printf("\n==============================\n");
-    printf("       CREATE PROFILE\n");
-    printf("==============================\n");
+    printf("\n====================================\n");
+    printf("          CREATE PROFILE\n");
+    printf("====================================\n");
 
     printf("Enter player name: ");
     scanf(" %49[^\n]", name);
 
     /* Check duplicate */
+
     for (int i = 0; i < profileCount; i++)
     {
         if (strcmp(profiles[i].name, name) == 0)
         {
-            printf("\nA profile with this name already exists!\n");
+            printf("\nProfile already exists!\n");
             return;
         }
     }
@@ -152,25 +240,41 @@ void createProfile()
     profiles[profileCount].wins = 0;
     profiles[profileCount].losses = 0;
     profiles[profileCount].matches = 0;
+
     profiles[profileCount].xp = 0;
     profiles[profileCount].level = 1;
+
     profiles[profileCount].currentStreak = 0;
     profiles[profileCount].bestStreak = 0;
 
+    profiles[profileCount].computerWins = 0;
+    profiles[profileCount].computerLosses = 0;
+
+    profiles[profileCount].twoPlayerWins = 0;
+    profiles[profileCount].tournamentWins = 0;
+
+    profiles[profileCount].highestXP = 0;
+
     activeProfile = profileCount;
+
     profileCount++;
 
     saveProfiles();
 
     printf("\nProfile created successfully!\n");
-    printf("Welcome, %s!\n", profiles[activeProfile].name);
+    printf("Welcome, %s!\n",
+           profiles[activeProfile].name);
 }
+
+/* =========================
+   SHOW PROFILES
+   ========================= */
 
 void showProfiles()
 {
-    printf("\n==============================\n");
-    printf("       AVAILABLE PROFILES\n");
-    printf("==============================\n");
+    printf("\n====================================\n");
+    printf("        AVAILABLE PROFILES\n");
+    printf("====================================\n");
 
     if (profileCount == 0)
     {
@@ -180,41 +284,55 @@ void showProfiles()
 
     for (int i = 0; i < profileCount; i++)
     {
-        printf("%d. %s", i + 1, profiles[i].name);
+        printf(
+            "%d. %s",
+            i + 1,
+            profiles[i].name
+        );
 
         if (i == activeProfile)
-            printf("  [ACTIVE]");
+            printf(" [ACTIVE]");
 
         printf("\n");
     }
 }
 
+/* =========================
+   SELECT PROFILE
+   ========================= */
+
 void selectProfile()
 {
+    int choice;
+
     if (profileCount == 0)
     {
-        printf("\nNo profiles available. Create one first.\n");
+        printf("\nNo profiles available.\n");
         return;
     }
 
     showProfiles();
-
-    int choice;
 
     printf("\nSelect profile: ");
     scanf("%d", &choice);
 
     if (choice < 1 || choice > profileCount)
     {
-        printf("Invalid profile choice!\n");
+        printf("Invalid profile!\n");
         return;
     }
 
     activeProfile = choice - 1;
 
-    printf("\nActive profile changed to: %s\n",
-           profiles[activeProfile].name);
+    printf(
+        "\nActive profile: %s\n",
+        profiles[activeProfile].name
+    );
 }
+
+/* =========================
+   CURRENT PROFILE
+   ========================= */
 
 void showCurrentProfile()
 {
@@ -224,35 +342,33 @@ void showCurrentProfile()
         return;
     }
 
-    PlayerProfile *p = &profiles[activeProfile];
+    PlayerProfile *p =
+        &profiles[activeProfile];
 
     printf("\n====================================\n");
     printf("          PLAYER PROFILE\n");
     printf("====================================\n");
 
-    printf("Player Name      : %s\n", p->name);
-    printf("Matches Played   : %d\n", p->matches);
-    printf("Wins             : %d\n", p->wins);
-    printf("Losses           : %d\n", p->losses);
-    printf("XP               : %d\n", p->xp);
-    printf("Level            : %d\n", p->level);
-    printf("Current Streak   : %d\n", p->currentStreak);
-    printf("Best Streak      : %d\n", p->bestStreak);
+    printf("Name            : %s\n", p->name);
+    printf("Matches         : %d\n", p->matches);
+    printf("Wins            : %d\n", p->wins);
+    printf("Losses          : %d\n", p->losses);
 
-    if (p->matches > 0)
-    {
-        float winRate =
-            ((float)p->wins / p->matches) * 100;
+    printf("XP              : %d\n", p->xp);
+    printf("Level           : %d\n", p->level);
 
-        printf("Win Rate         : %.2f%%\n", winRate);
-    }
-    else
-    {
-        printf("Win Rate         : 0.00%%\n");
-    }
+    printf("Current Streak  : %d\n",
+           p->currentStreak);
+
+    printf("Best Streak     : %d\n",
+           p->bestStreak);
 
     printf("====================================\n");
 }
+
+/* =========================
+   PROFILE MENU
+   ========================= */
 
 void profileMenu()
 {
@@ -268,7 +384,7 @@ void profileMenu()
         printf("2. Select Profile\n");
         printf("3. Show Profiles\n");
         printf("4. View Current Profile\n");
-        printf("5. Back to Main Menu\n");
+        printf("5. Back\n");
 
         printf("\nEnter choice: ");
         scanf("%d", &choice);
@@ -304,9 +420,13 @@ void profileMenu()
    COMPUTER AI
    ========================= */
 
-int getComputerMove(int player, int difficulty)
+int getComputerMove(
+    int player,
+    int difficulty
+)
 {
-    int randomMove;
+    int randomMove =
+        (rand() % 3) + 1;
 
     /*
        1 = Stone
@@ -314,33 +434,23 @@ int getComputerMove(int player, int difficulty)
        3 = Scissors
     */
 
-    randomMove = (rand() % 3) + 1;
-
     if (difficulty == 1)
     {
-        /* Easy = completely random */
         return randomMove;
     }
 
     if (difficulty == 2)
     {
-        /* Medium = 50% counter */
         if (rand() % 2 == 0)
-        {
             return (player % 3) + 1;
-        }
 
         return randomMove;
     }
 
-    /*
-       Hard = 75% counter
-    */
+    /* Hard */
 
     if (rand() % 4 != 0)
-    {
         return (player % 3) + 1;
-    }
 
     return randomMove;
 }
@@ -349,14 +459,19 @@ int getComputerMove(int player, int difficulty)
    WINNER CALCULATION
    ========================= */
 
-int getWinnerFromMoves(int player1, int player2)
+int getWinnerFromMoves(
+    int player1,
+    int player2
+)
 {
     if (player1 == player2)
         return 0;
 
-    if ((player1 == 1 && player2 == 3) ||
+    if (
+        (player1 == 1 && player2 == 3) ||
         (player1 == 2 && player2 == 1) ||
-        (player1 == 3 && player2 == 2))
+        (player1 == 3 && player2 == 2)
+    )
     {
         return 1;
     }
@@ -368,27 +483,35 @@ int getWinnerFromMoves(int player1, int player2)
    HISTORY
    ========================= */
 
-void saveHistory(char playerName[], char result[],
-                 int score1, int score2)
+void saveHistory(
+    char playerName[],
+    char result[],
+    int score1,
+    int score2
+)
 {
-    FILE *file = fopen("game_history.txt", "a");
+    FILE *file =
+        fopen("game_history.txt", "a");
 
     if (file == NULL)
         return;
 
-    fprintf(file,
-            "Player: %s | Result: %s | Score: %d-%d\n",
-            playerName,
-            result,
-            score1,
-            score2);
+    fprintf(
+        file,
+        "Player: %s | Result: %s | Score: %d-%d\n",
+        playerName,
+        result,
+        score1,
+        score2
+    );
 
     fclose(file);
 }
 
 void showGameHistory()
 {
-    FILE *file = fopen("game_history.txt", "r");
+    FILE *file =
+        fopen("game_history.txt", "r");
 
     printf("\n====================================\n");
     printf("           GAME HISTORY\n");
@@ -400,7 +523,7 @@ void showGameHistory()
         return;
     }
 
-    char line[200];
+    char line[250];
 
     while (fgets(line, sizeof(line), file))
     {
@@ -418,16 +541,22 @@ void playGame()
 {
     if (activeProfile == -1)
     {
-        printf("\nPlease create/select a profile first!\n");
+        printf(
+            "\nPlease create/select a profile first!\n"
+        );
+
         return;
     }
 
-    PlayerProfile *p = &profiles[activeProfile];
+    PlayerProfile *p =
+        &profiles[activeProfile];
 
     int bestOf;
     int difficulty;
+
     int playerMove;
     int computerMove;
+
     int playerScore = 0;
     int computerScore = 0;
 
@@ -443,8 +572,10 @@ void playGame()
 
     if (bestOf == 1)
         bestOf = 3;
+
     else if (bestOf == 2)
         bestOf = 5;
+
     else
     {
         printf("Invalid choice!\n");
@@ -459,46 +590,60 @@ void playGame()
     printf("Choose difficulty: ");
     scanf("%d", &difficulty);
 
-    if (difficulty < 1 || difficulty > 3)
+    if (difficulty < 1 ||
+        difficulty > 3)
     {
         printf("Invalid difficulty!\n");
         return;
     }
 
-    int roundsNeeded = (bestOf / 2) + 1;
+    int roundsNeeded =
+        (bestOf / 2) + 1;
 
-    while (playerScore < roundsNeeded &&
-           computerScore < roundsNeeded)
+    while (
+        playerScore < roundsNeeded &&
+        computerScore < roundsNeeded
+    )
     {
         printf("\n------------------------------------\n");
+
         printf("Choose your move:\n");
         printf("1. Stone\n");
         printf("2. Paper\n");
         printf("3. Scissors\n");
-        printf("------------------------------------\n");
 
         printf("Your choice: ");
         scanf("%d", &playerMove);
 
-        if (playerMove < 1 || playerMove > 3)
+        if (playerMove < 1 ||
+            playerMove > 3)
         {
             printf("Invalid move!\n");
             continue;
         }
 
-        computerMove = getComputerMove(playerMove, difficulty);
+        computerMove =
+            getComputerMove(
+                playerMove,
+                difficulty
+            );
 
         printf("\nComputer chose: ");
 
         if (computerMove == 1)
             printf("Stone\n");
+
         else if (computerMove == 2)
             printf("Paper\n");
+
         else
             printf("Scissors\n");
 
         int result =
-            getWinnerFromMoves(playerMove, computerMove);
+            getWinnerFromMoves(
+                playerMove,
+                computerMove
+            );
 
         if (result == 0)
         {
@@ -515,13 +660,19 @@ void playGame()
             computerScore++;
         }
 
-        printf("Score: %s %d - Computer %d\n",
-               p->name,
-               playerScore,
-               computerScore);
+        printf(
+            "Score: %s %d - Computer %d\n",
+            p->name,
+            playerScore,
+            computerScore
+        );
     }
 
     p->matches++;
+
+    /* =========================
+       MATCH WIN
+       ========================= */
 
     if (playerScore > computerScore)
     {
@@ -530,17 +681,33 @@ void playGame()
         printf("====================================\n");
 
         p->wins++;
+        p->computerWins++;
+
         p->currentStreak++;
 
-        if (p->currentStreak > p->bestStreak)
-            p->bestStreak = p->currentStreak;
+        if (p->currentStreak >
+            p->bestStreak)
+        {
+            p->bestStreak =
+                p->currentStreak;
+        }
 
         p->xp += 100;
 
         printf("+100 XP\n");
-        saveHistory(p->name, "WIN",
-                    playerScore, computerScore);
+
+        saveHistory(
+            p->name,
+            "WIN",
+            playerScore,
+            computerScore
+        );
     }
+
+    /* =========================
+       MATCH LOSS
+       ========================= */
+
     else
     {
         printf("\n====================================\n");
@@ -548,6 +715,8 @@ void playGame()
         printf("====================================\n");
 
         p->losses++;
+        p->computerLosses++;
+
         p->currentStreak = 0;
 
         if (p->xp >= 25)
@@ -557,17 +726,33 @@ void playGame()
 
         printf("-25 XP\n");
 
-        saveHistory(p->name, "LOSS",
-                    playerScore, computerScore);
+        saveHistory(
+            p->name,
+            "LOSS",
+            playerScore,
+            computerScore
+        );
     }
 
-    p->level = (p->xp / 500) + 1;
+    /* Level */
+
+    p->level =
+        (p->xp / 500) + 1;
+
+    /* Highest XP */
+
+    if (p->xp > p->highestXP)
+        p->highestXP = p->xp;
 
     saveProfiles();
+
     updateLeaderboard();
 
-    printf("\nCurrent XP: %d\n", p->xp);
-    printf("Current Level: %d\n", p->level);
+    printf("\nCurrent XP   : %d\n",
+           p->xp);
+
+    printf("Current Level: %d\n",
+           p->level);
 }
 
 /* =========================
@@ -580,6 +765,7 @@ void twoPlayerMode()
     char player2[NAME_SIZE];
 
     int bestOf;
+
     int score1 = 0;
     int score2 = 0;
 
@@ -601,21 +787,29 @@ void twoPlayerMode()
 
     if (bestOf == 1)
         bestOf = 3;
+
     else if (bestOf == 2)
         bestOf = 5;
+
     else
     {
         printf("Invalid choice!\n");
         return;
     }
 
-    int needed = (bestOf / 2) + 1;
+    int needed =
+        (bestOf / 2) + 1;
 
-    while (score1 < needed && score2 < needed)
+    while (
+        score1 < needed &&
+        score2 < needed
+    )
     {
-        int move1, move2;
+        int move1;
+        int move2;
 
-        printf("\n%s's turn\n", player1);
+        printf("\n%s's turn\n",
+               player1);
 
         printf("1. Stone\n");
         printf("2. Paper\n");
@@ -624,17 +818,20 @@ void twoPlayerMode()
         printf("Enter move: ");
         scanf("%d", &move1);
 
-        if (move1 < 1 || move1 > 3)
+        if (move1 < 1 ||
+            move1 > 3)
         {
             printf("Invalid move!\n");
             continue;
         }
 
-        /* Hide Player 1's move */
+        /* Hide Player 1 */
+
         for (int i = 0; i < 20; i++)
             printf("\n");
 
-        printf("%s's turn\n", player2);
+        printf("%s's turn\n",
+               player2);
 
         printf("1. Stone\n");
         printf("2. Paper\n");
@@ -643,48 +840,107 @@ void twoPlayerMode()
         printf("Enter move: ");
         scanf("%d", &move2);
 
-        if (move2 < 1 || move2 > 3)
+        if (move2 < 1 ||
+            move2 > 3)
         {
             printf("Invalid move!\n");
             continue;
         }
 
         int result =
-            getWinnerFromMoves(move1, move2);
+            getWinnerFromMoves(
+                move1,
+                move2
+            );
 
         if (result == 0)
         {
             printf("\nRound Draw!\n");
         }
+
         else if (result == 1)
         {
-            printf("\n%s wins the round!\n", player1);
+            printf(
+                "\n%s wins the round!\n",
+                player1
+            );
+
             score1++;
         }
+
         else
         {
-            printf("\n%s wins the round!\n", player2);
+            printf(
+                "\n%s wins the round!\n",
+                player2
+            );
+
             score2++;
         }
 
-        printf("Score: %s %d - %s %d\n",
-               player1, score1,
-               player2, score2);
+        printf(
+            "Score: %s %d - %s %d\n",
+            player1,
+            score1,
+            player2,
+            score2
+        );
     }
 
     printf("\n====================================\n");
 
     if (score1 > score2)
     {
-        printf("🏆 %s WINS!\n", player1);
-        saveHistory(player1, "TWO PLAYER WIN",
-                    score1, score2);
+        printf(
+            "🏆 %s WINS!\n",
+            player1
+        );
+
+        if (activeProfile != -1 &&
+            strcmp(
+                player1,
+                profiles[activeProfile].name
+            ) == 0)
+        {
+            profiles[activeProfile]
+                .twoPlayerWins++;
+
+            saveProfiles();
+        }
+
+        saveHistory(
+            player1,
+            "TWO PLAYER WIN",
+            score1,
+            score2
+        );
     }
+
     else
     {
-        printf("🏆 %s WINS!\n", player2);
-        saveHistory(player2, "TWO PLAYER WIN",
-                    score2, score1);
+        printf(
+            "🏆 %s WINS!\n",
+            player2
+        );
+
+        if (activeProfile != -1 &&
+            strcmp(
+                player2,
+                profiles[activeProfile].name
+            ) == 0)
+        {
+            profiles[activeProfile]
+                .twoPlayerWins++;
+
+            saveProfiles();
+        }
+
+        saveHistory(
+            player2,
+            "TWO PLAYER WIN",
+            score2,
+            score1
+        );
     }
 
     printf("====================================\n");
@@ -694,20 +950,28 @@ void twoPlayerMode()
    TOURNAMENT MATCH
    ========================= */
 
-int playTournamentMatch(char player1[],
-                        char player2[],
-                        int bestOf)
+int playTournamentMatch(
+    char player1[],
+    char player2[],
+    int bestOf
+)
 {
     int score1 = 0;
     int score2 = 0;
 
-    int needed = (bestOf / 2) + 1;
+    int needed =
+        (bestOf / 2) + 1;
 
-    while (score1 < needed && score2 < needed)
+    while (
+        score1 < needed &&
+        score2 < needed
+    )
     {
-        int move1, move2;
+        int move1;
+        int move2;
 
-        printf("\n%s's turn\n", player1);
+        printf("\n%s's turn\n",
+               player1);
 
         printf("1. Stone\n");
         printf("2. Paper\n");
@@ -716,7 +980,8 @@ int playTournamentMatch(char player1[],
         printf("Enter move: ");
         scanf("%d", &move1);
 
-        if (move1 < 1 || move1 > 3)
+        if (move1 < 1 ||
+            move1 > 3)
         {
             printf("Invalid move!\n");
             continue;
@@ -725,7 +990,8 @@ int playTournamentMatch(char player1[],
         for (int i = 0; i < 20; i++)
             printf("\n");
 
-        printf("%s's turn\n", player2);
+        printf("%s's turn\n",
+               player2);
 
         printf("1. Stone\n");
         printf("2. Paper\n");
@@ -734,33 +1000,51 @@ int playTournamentMatch(char player1[],
         printf("Enter move: ");
         scanf("%d", &move2);
 
-        if (move2 < 1 || move2 > 3)
+        if (move2 < 1 ||
+            move2 > 3)
         {
             printf("Invalid move!\n");
             continue;
         }
 
         int result =
-            getWinnerFromMoves(move1, move2);
+            getWinnerFromMoves(
+                move1,
+                move2
+            );
 
         if (result == 0)
         {
             printf("Round Draw!\n");
         }
+
         else if (result == 1)
         {
-            printf("%s wins the round!\n", player1);
+            printf(
+                "%s wins the round!\n",
+                player1
+            );
+
             score1++;
         }
+
         else
         {
-            printf("%s wins the round!\n", player2);
+            printf(
+                "%s wins the round!\n",
+                player2
+            );
+
             score2++;
         }
 
-        printf("Score: %s %d - %s %d\n",
-               player1, score1,
-               player2, score2);
+        printf(
+            "Score: %s %d - %s %d\n",
+            player1,
+            score1,
+            player2,
+            score2
+        );
     }
 
     if (score1 > score2)
@@ -779,6 +1063,7 @@ void tournamentMode()
 
     char semifinal1Winner[NAME_SIZE];
     char semifinal2Winner[NAME_SIZE];
+
     char champion[NAME_SIZE];
 
     int bestOf;
@@ -789,8 +1074,15 @@ void tournamentMode()
 
     for (int i = 0; i < 4; i++)
     {
-        printf("Enter Player %d name: ", i + 1);
-        scanf(" %49[^\n]", players[i]);
+        printf(
+            "Enter Player %d name: ",
+            i + 1
+        );
+
+        scanf(
+            " %49[^\n]",
+            players[i]
+        );
     }
 
     printf("\n1. Best of 3\n");
@@ -801,8 +1093,10 @@ void tournamentMode()
 
     if (bestOf == 1)
         bestOf = 3;
+
     else if (bestOf == 2)
         bestOf = 5;
+
     else
     {
         printf("Invalid choice!\n");
@@ -814,108 +1108,321 @@ void tournamentMode()
     printf("====================================\n");
 
     int result1 =
-        playTournamentMatch(players[0],
-                            players[1],
-                            bestOf);
+        playTournamentMatch(
+            players[0],
+            players[1],
+            bestOf
+        );
 
     if (result1 == 1)
-        strcpy(semifinal1Winner, players[0]);
+        strcpy(
+            semifinal1Winner,
+            players[0]
+        );
     else
-        strcpy(semifinal1Winner, players[1]);
+        strcpy(
+            semifinal1Winner,
+            players[1]
+        );
 
-    printf("\nSemi-Final 1 Winner: %s\n",
-           semifinal1Winner);
+    printf(
+        "\nWinner: %s\n",
+        semifinal1Winner
+    );
 
     printf("\n====================================\n");
     printf("          SEMI-FINAL 2\n");
     printf("====================================\n");
 
     int result2 =
-        playTournamentMatch(players[2],
-                            players[3],
-                            bestOf);
+        playTournamentMatch(
+            players[2],
+            players[3],
+            bestOf
+        );
 
     if (result2 == 1)
-        strcpy(semifinal2Winner, players[2]);
+        strcpy(
+            semifinal2Winner,
+            players[2]
+        );
     else
-        strcpy(semifinal2Winner, players[3]);
+        strcpy(
+            semifinal2Winner,
+            players[3]
+        );
 
-    printf("\nSemi-Final 2 Winner: %s\n",
-           semifinal2Winner);
+    printf(
+        "\nWinner: %s\n",
+        semifinal2Winner
+    );
 
     printf("\n====================================\n");
-    printf("             FINAL\n");
+    printf("              FINAL\n");
     printf("====================================\n");
 
     int finalResult =
-        playTournamentMatch(semifinal1Winner,
-                            semifinal2Winner,
-                            bestOf);
+        playTournamentMatch(
+            semifinal1Winner,
+            semifinal2Winner,
+            bestOf
+        );
 
     if (finalResult == 1)
-        strcpy(champion, semifinal1Winner);
+        strcpy(
+            champion,
+            semifinal1Winner
+        );
     else
-        strcpy(champion, semifinal2Winner);
+        strcpy(
+            champion,
+            semifinal2Winner
+        );
 
     printf("\n====================================\n");
     printf("        🏆 TOURNAMENT CHAMPION\n");
     printf("====================================\n");
 
-    printf("          %s\n", champion);
+    printf(
+        "           %s\n",
+        champion
+    );
 
     printf("====================================\n");
 
-    saveHistory(champion,
-                "TOURNAMENT CHAMPION",
-                0, 0);
+    /*
+       Update tournament statistics
+       if active profile is champion.
+    */
+
+    if (
+        activeProfile != -1 &&
+        strcmp(
+            champion,
+            profiles[activeProfile].name
+        ) == 0
+    )
+    {
+        profiles[activeProfile]
+            .tournamentWins++;
+
+        saveProfiles();
+    }
+
+    saveHistory(
+        champion,
+        "TOURNAMENT CHAMPION",
+        0,
+        0
+    );
 }
 
 /* =========================
-   STATISTICS
+   BASIC STATISTICS
    ========================= */
 
 void showStatistics()
 {
     if (activeProfile == -1)
     {
-        printf("\nPlease select a profile first!\n");
+        printf(
+            "\nPlease select a profile first!\n"
+        );
+
         return;
     }
 
-    PlayerProfile *p = &profiles[activeProfile];
+    PlayerProfile *p =
+        &profiles[activeProfile];
 
     printf("\n====================================\n");
     printf("           STATISTICS\n");
     printf("====================================\n");
 
-    printf("Player           : %s\n", p->name);
-    printf("Matches          : %d\n", p->matches);
-    printf("Wins             : %d\n", p->wins);
-    printf("Losses           : %d\n", p->losses);
-    printf("Current Streak   : %d\n", p->currentStreak);
-    printf("Best Streak      : %d\n", p->bestStreak);
-    printf("XP               : %d\n", p->xp);
-    printf("Level            : %d\n", p->level);
+    printf("Player          : %s\n",
+           p->name);
+
+    printf("Matches         : %d\n",
+           p->matches);
+
+    printf("Wins            : %d\n",
+           p->wins);
+
+    printf("Losses          : %d\n",
+           p->losses);
+
+    printf("Current Streak  : %d\n",
+           p->currentStreak);
+
+    printf("Best Streak     : %d\n",
+           p->bestStreak);
+
+    printf("XP              : %d\n",
+           p->xp);
+
+    printf("Level           : %d\n",
+           p->level);
 
     if (p->matches > 0)
     {
         float winRate =
-            ((float)p->wins / p->matches) * 100;
+            ((float)p->wins /
+             p->matches) *
+            100.0f;
 
-        printf("Win Rate         : %.2f%%\n",
-               winRate);
+        printf(
+            "Win Rate        : %.2f%%\n",
+            winRate
+        );
     }
     else
     {
-        printf("Win Rate         : 0.00%%\n");
+        printf(
+            "Win Rate        : 0.00%%\n"
+        );
     }
 
-    int nextLevelXP = p->level * 500;
-
-    printf("XP for Next Level: %d\n",
-           nextLevelXP - p->xp);
-
     printf("====================================\n");
+}
+
+/* =========================
+   FEATURE 18
+   ADVANCED STATISTICS
+   ========================= */
+
+void showAdvancedStatistics()
+{
+    if (activeProfile == -1)
+    {
+        printf(
+            "\nPlease select a profile first!\n"
+        );
+
+        return;
+    }
+
+    PlayerProfile *p =
+        &profiles[activeProfile];
+
+    float winRate = 0.0f;
+    float lossRate = 0.0f;
+
+    if (p->matches > 0)
+    {
+        winRate =
+            ((float)p->wins /
+             p->matches) *
+            100.0f;
+
+        lossRate =
+            ((float)p->losses /
+             p->matches) *
+            100.0f;
+    }
+
+    int nextLevelXP =
+        p->level * 500;
+
+    int xpNeeded =
+        nextLevelXP - p->xp;
+
+    if (xpNeeded < 0)
+        xpNeeded = 0;
+
+    printf("\n");
+    printf("╔══════════════════════════════════════════╗\n");
+    printf("║       📊 ADVANCED STATISTICS             ║\n");
+    printf("╠══════════════════════════════════════════╣\n");
+
+    printf(
+        "║ Player          : %-23s ║\n",
+        p->name
+    );
+
+    printf(
+        "║ Level           : %-23d ║\n",
+        p->level
+    );
+
+    printf(
+        "║ XP              : %-23d ║\n",
+        p->xp
+    );
+
+    printf(
+        "║ Highest XP      : %-23d ║\n",
+        p->highestXP
+    );
+
+    printf("╠══════════════════════════════════════════╣\n");
+
+    printf(
+        "║ Matches Played  : %-23d ║\n",
+        p->matches
+    );
+
+    printf(
+        "║ Total Wins      : %-23d ║\n",
+        p->wins
+    );
+
+    printf(
+        "║ Total Losses    : %-23d ║\n",
+        p->losses
+    );
+
+    printf(
+        "║ Win Rate        : %-22.2f%% ║\n",
+        winRate
+    );
+
+    printf(
+        "║ Loss Rate       : %-22.2f%% ║\n",
+        lossRate
+    );
+
+    printf("╠══════════════════════════════════════════╣\n");
+
+    printf(
+        "║ Current Streak  : %-23d ║\n",
+        p->currentStreak
+    );
+
+    printf(
+        "║ Best Streak     : %-23d ║\n",
+        p->bestStreak
+    );
+
+    printf("╠══════════════════════════════════════════╣\n");
+
+    printf(
+        "║ Computer Wins   : %-23d ║\n",
+        p->computerWins
+    );
+
+    printf(
+        "║ Computer Losses : %-23d ║\n",
+        p->computerLosses
+    );
+
+    printf(
+        "║ 2P Wins         : %-23d ║\n",
+        p->twoPlayerWins
+    );
+
+    printf(
+        "║ Tournament Wins : %-23d ║\n",
+        p->tournamentWins
+    );
+
+    printf("╠══════════════════════════════════════════╣\n");
+
+    printf(
+        "║ XP to Next Level: %-23d ║\n",
+        xpNeeded
+    );
+
+    printf("╚══════════════════════════════════════════╝\n");
 }
 
 /* =========================
@@ -926,47 +1433,78 @@ void showAchievements()
 {
     if (activeProfile == -1)
     {
-        printf("\nPlease select a profile first!\n");
+        printf(
+            "\nPlease select a profile first!\n"
+        );
+
         return;
     }
 
-    PlayerProfile *p = &profiles[activeProfile];
+    PlayerProfile *p =
+        &profiles[activeProfile];
 
     printf("\n====================================\n");
     printf("           ACHIEVEMENTS\n");
     printf("====================================\n");
 
-    printf("Player: %s\n\n", p->name);
+    printf(
+        "Player: %s\n\n",
+        p->name
+    );
 
     if (p->wins >= 1)
-        printf("🏆 First Victory - UNLOCKED\n");
+        printf(
+            "🏆 First Victory - UNLOCKED\n"
+        );
     else
-        printf("🔒 First Victory - Locked\n");
+        printf(
+            "🔒 First Victory - Locked\n"
+        );
 
     if (p->bestStreak >= 3)
-        printf("🔥 3 Win Streak - UNLOCKED\n");
+        printf(
+            "🔥 3 Win Streak - UNLOCKED\n"
+        );
     else
-        printf("🔒 3 Win Streak - Locked\n");
+        printf(
+            "🔒 3 Win Streak - Locked\n"
+        );
 
     if (p->bestStreak >= 5)
-        printf("🔥 5 Win Streak - UNLOCKED\n");
+        printf(
+            "🔥 5 Win Streak - UNLOCKED\n"
+        );
     else
-        printf("🔒 5 Win Streak - Locked\n");
+        printf(
+            "🔒 5 Win Streak - Locked\n"
+        );
 
     if (p->bestStreak >= 10)
-        printf("🔥 10 Win Streak - UNLOCKED\n");
+        printf(
+            "🔥 10 Win Streak - UNLOCKED\n"
+        );
     else
-        printf("🔒 10 Win Streak - Locked\n");
+        printf(
+            "🔒 10 Win Streak - Locked\n"
+        );
 
     if (p->level >= 5)
-        printf("⭐ Level 5 - UNLOCKED\n");
+        printf(
+            "⭐ Level 5 - UNLOCKED\n"
+        );
     else
-        printf("🔒 Level 5 - Locked\n");
+        printf(
+            "🔒 Level 5 - Locked\n"
+        );
 
     if (p->level >= 10)
-        printf("👑 Level 10 - UNLOCKED\n");
+        printf(
+            "👑 Level 10 - UNLOCKED\n"
+        );
     else
-        printf("🔒 Level 10 - Locked\n");
+        printf(
+            "🔒 Level 10 - Locked\n"
+        );
 
     printf("====================================\n");
 }
@@ -975,23 +1513,16 @@ void showAchievements()
    LEADERBOARD
    ========================= */
 
-typedef struct
+int comparePlayers(
+    const void *a,
+    const void *b
+)
 {
-    char name[NAME_SIZE];
-    int wins;
-    int losses;
-    int xp;
-    int level;
-    int bestStreak;
-} LeaderboardPlayer;
+    const LeaderboardPlayer *p1 =
+        (const LeaderboardPlayer *)a;
 
-int comparePlayers(const void *a, const void *b)
-{
-    LeaderboardPlayer *p1 =
-        (LeaderboardPlayer *)a;
-
-    LeaderboardPlayer *p2 =
-        (LeaderboardPlayer *)b;
+    const LeaderboardPlayer *p2 =
+        (const LeaderboardPlayer *)b;
 
     return p2->xp - p1->xp;
 }
@@ -1001,23 +1532,30 @@ void updateLeaderboard()
     if (activeProfile == -1)
         return;
 
-    LeaderboardPlayer players[MAX_LEADERBOARD + 1];
+    LeaderboardPlayer players[
+        MAX_LEADERBOARD + 1
+    ];
 
     int count = 0;
 
-    FILE *file = fopen("leaderboard.txt", "r");
+    FILE *file =
+        fopen("leaderboard.txt", "r");
 
     if (file != NULL)
     {
-        while (count < MAX_LEADERBOARD &&
-               fscanf(file,
-                      " %49[^|]|%d|%d|%d|%d|%d",
-                      players[count].name,
-                      &players[count].wins,
-                      &players[count].losses,
-                      &players[count].xp,
-                      &players[count].level,
-                      &players[count].bestStreak) == 6)
+        while (
+            count < MAX_LEADERBOARD &&
+            fscanf(
+                file,
+                " %49[^|]|%d|%d|%d|%d|%d",
+                players[count].name,
+                &players[count].wins,
+                &players[count].losses,
+                &players[count].xp,
+                &players[count].level,
+                &players[count].bestStreak
+            ) == 6
+        )
         {
             count++;
         }
@@ -1029,8 +1567,12 @@ void updateLeaderboard()
 
     for (int i = 0; i < count; i++)
     {
-        if (strcmp(players[i].name,
-                   profiles[activeProfile].name) == 0)
+        if (
+            strcmp(
+                players[i].name,
+                profiles[activeProfile].name
+            ) == 0
+        )
         {
             found = i;
             break;
@@ -1050,8 +1592,10 @@ void updateLeaderboard()
         }
     }
 
-    strcpy(players[found].name,
-           profiles[activeProfile].name);
+    strcpy(
+        players[found].name,
+        profiles[activeProfile].name
+    );
 
     players[found].wins =
         profiles[activeProfile].wins;
@@ -1068,29 +1612,34 @@ void updateLeaderboard()
     players[found].bestStreak =
         profiles[activeProfile].bestStreak;
 
-    qsort(players,
-          count,
-          sizeof(LeaderboardPlayer),
-          comparePlayers);
+    qsort(
+        players,
+        count,
+        sizeof(LeaderboardPlayer),
+        comparePlayers
+    );
 
     if (count > MAX_LEADERBOARD)
         count = MAX_LEADERBOARD;
 
-    file = fopen("leaderboard.txt", "w");
+    file =
+        fopen("leaderboard.txt", "w");
 
     if (file == NULL)
         return;
 
     for (int i = 0; i < count; i++)
     {
-        fprintf(file,
-                "%s|%d|%d|%d|%d|%d\n",
-                players[i].name,
-                players[i].wins,
-                players[i].losses,
-                players[i].xp,
-                players[i].level,
-                players[i].bestStreak);
+        fprintf(
+            file,
+            "%s|%d|%d|%d|%d|%d\n",
+            players[i].name,
+            players[i].wins,
+            players[i].losses,
+            players[i].xp,
+            players[i].level,
+            players[i].bestStreak
+        );
     }
 
     fclose(file);
@@ -1098,11 +1647,14 @@ void updateLeaderboard()
 
 void showLeaderboard()
 {
-    LeaderboardPlayer players[MAX_LEADERBOARD];
+    LeaderboardPlayer players[
+        MAX_LEADERBOARD
+    ];
 
     int count = 0;
 
-    FILE *file = fopen("leaderboard.txt", "r");
+    FILE *file =
+        fopen("leaderboard.txt", "r");
 
     printf("\n============================================\n");
     printf("                 LEADERBOARD\n");
@@ -1110,93 +1662,137 @@ void showLeaderboard()
 
     if (file == NULL)
     {
-        printf("No leaderboard data available.\n");
+        printf(
+            "No leaderboard data available.\n"
+        );
+
         return;
     }
 
-    while (count < MAX_LEADERBOARD &&
-           fscanf(file,
-                  " %49[^|]|%d|%d|%d|%d|%d",
-                  players[count].name,
-                  &players[count].wins,
-                  &players[count].losses,
-                  &players[count].xp,
-                  &players[count].level,
-                  &players[count].bestStreak) == 6)
+    while (
+        count < MAX_LEADERBOARD &&
+        fscanf(
+            file,
+            " %49[^|]|%d|%d|%d|%d|%d",
+            players[count].name,
+            &players[count].wins,
+            &players[count].losses,
+            &players[count].xp,
+            &players[count].level,
+            &players[count].bestStreak
+        ) == 6
+    )
     {
         count++;
     }
 
     fclose(file);
 
-    qsort(players,
-          count,
-          sizeof(LeaderboardPlayer),
-          comparePlayers);
+    qsort(
+        players,
+        count,
+        sizeof(LeaderboardPlayer),
+        comparePlayers
+    );
 
-    printf("%-5s %-20s %-8s %-8s %-8s %-8s\n",
-           "Rank",
-           "Player",
-           "XP",
-           "Level",
-           "Wins",
-           "Streak");
+    printf(
+        "%-5s %-20s %-8s %-8s %-8s %-8s\n",
+        "Rank",
+        "Player",
+        "XP",
+        "Level",
+        "Wins",
+        "Streak"
+    );
 
-    printf("--------------------------------------------\n");
+    printf(
+        "--------------------------------------------\n"
+    );
 
     for (int i = 0; i < count; i++)
     {
-        printf("%-5d %-20s %-8d %-8d %-8d %-8d\n",
-               i + 1,
-               players[i].name,
-               players[i].xp,
-               players[i].level,
-               players[i].wins,
-               players[i].bestStreak);
+        printf(
+            "%-5d %-20s %-8d %-8d %-8d %-8d\n",
+
+            i + 1,
+            players[i].name,
+            players[i].xp,
+            players[i].level,
+            players[i].wins,
+            players[i].bestStreak
+        );
     }
 
-    printf("============================================\n");
+    printf(
+        "============================================\n"
+    );
 }
 
 /* =========================
-   RESET PROFILE
+   RESET STATISTICS
    ========================= */
 
 void resetProfileStatistics()
 {
     if (activeProfile == -1)
     {
-        printf("\nPlease select a profile first!\n");
+        printf(
+            "\nPlease select a profile first!\n"
+        );
+
         return;
     }
 
     char confirm;
 
     printf("\nWARNING!\n");
-    printf("This will reset all statistics for %s.\n",
-           profiles[activeProfile].name);
 
-    printf("Continue? (Y/N): ");
+    printf(
+        "This will reset all statistics for %s.\n",
+        profiles[activeProfile].name
+    );
+
+    printf(
+        "Continue? (Y/N): "
+    );
+
     scanf(" %c", &confirm);
 
-    if (confirm == 'Y' || confirm == 'y')
+    if (
+        confirm == 'Y' ||
+        confirm == 'y'
+    )
     {
         profiles[activeProfile].wins = 0;
         profiles[activeProfile].losses = 0;
         profiles[activeProfile].matches = 0;
+
         profiles[activeProfile].xp = 0;
         profiles[activeProfile].level = 1;
+
         profiles[activeProfile].currentStreak = 0;
         profiles[activeProfile].bestStreak = 0;
+
+        profiles[activeProfile].computerWins = 0;
+        profiles[activeProfile].computerLosses = 0;
+
+        profiles[activeProfile].twoPlayerWins = 0;
+        profiles[activeProfile].tournamentWins = 0;
+
+        profiles[activeProfile].highestXP = 0;
 
         saveProfiles();
         updateLeaderboard();
 
-        printf("\nStatistics reset successfully!\n");
+        printf(
+            "\nStatistics reset successfully!\n"
+        );
     }
     else
     {
-        printf("\nReset cancelled.\n");
+        printf(
+            "\nReset cancelled.\n"
+        );
     }
 }
 
@@ -1210,29 +1806,43 @@ void showRules()
     printf("              RULES\n");
     printf("====================================\n");
 
-    printf("1. Stone beats Scissors.\n");
-    printf("2. Scissors beats Paper.\n");
-    printf("3. Paper beats Stone.\n");
-    printf("4. Same choices result in a draw.\n");
-    printf("5. Best of 3 requires 2 round wins.\n");
-    printf("6. Best of 5 requires 3 round wins.\n");
-    printf("7. Match win gives +100 XP.\n");
-    printf("8. Match loss removes 25 XP.\n");
-    printf("9. Every 500 XP increases your level.\n");
+    printf(
+        "1. Stone beats Scissors.\n"
+    );
+
+    printf(
+        "2. Scissors beats Paper.\n"
+    );
+
+    printf(
+        "3. Paper beats Stone.\n"
+    );
+
+    printf(
+        "4. Same choices result in a draw.\n"
+    );
+
+    printf(
+        "5. Best of 3 requires 2 wins.\n"
+    );
+
+    printf(
+        "6. Best of 5 requires 3 wins.\n"
+    );
+
+    printf(
+        "7. Match win gives +100 XP.\n"
+    );
+
+    printf(
+        "8. Match loss removes 25 XP.\n"
+    );
+
+    printf(
+        "9. Every 500 XP increases your level.\n"
+    );
 
     printf("====================================\n");
-}
-
-/* =========================
-   INPUT BUFFER
-   ========================= */
-
-void clearInputBuffer()
-{
-    int c;
-
-    while ((c = getchar()) != '\n' &&
-           c != EOF);
 }
 
 /* =========================
@@ -1241,7 +1851,9 @@ void clearInputBuffer()
 
 int main()
 {
-    srand((unsigned int)time(NULL));
+    srand(
+        (unsigned int)time(NULL)
+    );
 
     loadProfiles();
 
@@ -1253,35 +1865,53 @@ int main()
     while (1)
     {
         printf("\n\n");
-        printf("============================================\n");
-        printf("        STONE PAPER SCISSORS GAME\n");
-        printf("============================================\n");
+        printf(
+            "============================================\n"
+        );
+
+        printf(
+            "        STONE PAPER SCISSORS GAME\n"
+        );
+
+        printf(
+            "============================================\n"
+        );
 
         if (activeProfile != -1)
         {
-            printf("Active Player: %s\n",
-                   profiles[activeProfile].name);
+            printf(
+                "Active Player: %s\n",
+                profiles[activeProfile].name
+            );
         }
         else
         {
-            printf("Active Player: None\n");
+            printf(
+                "Active Player: None\n"
+            );
         }
 
-        printf("============================================\n");
+        printf(
+            "============================================\n"
+        );
 
         printf("1. Play Game\n");
         printf("2. Profile Manager\n");
         printf("3. Two Player Mode\n");
         printf("4. Tournament Mode\n");
         printf("5. Statistics\n");
-        printf("6. Game History\n");
-        printf("7. Rules\n");
-        printf("8. Achievements\n");
-        printf("9. Leaderboard\n");
-        printf("10. Reset Profile Statistics\n");
-        printf("11. Exit\n");
+        printf("6. Advanced Statistics Dashboard\n");
+        printf("7. Game History\n");
+        printf("8. Rules\n");
+        printf("9. Achievements\n");
+        printf("10. Leaderboard\n");
+        printf("11. Reset Profile Statistics\n");
+        printf("12. Exit\n");
 
-        printf("\nEnter your choice: ");
+        printf(
+            "\nEnter your choice: "
+        );
+
         scanf("%d", &choice);
 
         switch (choice)
@@ -1307,38 +1937,51 @@ int main()
             break;
 
         case 6:
-            showGameHistory();
+            showAdvancedStatistics();
             break;
 
         case 7:
-            showRules();
+            showGameHistory();
             break;
 
         case 8:
-            showAchievements();
+            showRules();
             break;
 
         case 9:
-            showLeaderboard();
+            showAchievements();
             break;
 
         case 10:
-            resetProfileStatistics();
+            showLeaderboard();
             break;
 
         case 11:
+            resetProfileStatistics();
+            break;
+
+        case 12:
+
             saveProfiles();
 
             if (activeProfile != -1)
                 updateLeaderboard();
 
-            printf("\nThanks for playing!\n");
-            printf("Goodbye!\n");
+            printf(
+                "\nThanks for playing!\n"
+            );
+
+            printf(
+                "Goodbye!\n"
+            );
 
             return 0;
 
         default:
-            printf("\nInvalid choice! Please try again.\n");
+
+            printf(
+                "\nInvalid choice! Try again.\n"
+            );
         }
     }
 
