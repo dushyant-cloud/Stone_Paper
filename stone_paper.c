@@ -24,6 +24,7 @@ void playGame(char playerName[], int *wins, int *losses,
               int *xp, int *level);
 
 void twoPlayerMode();
+void tournamentMode();
 
 void showStatistics(char playerName[], int wins, int losses,
                     int totalMatches, int currentStreak,
@@ -55,6 +56,14 @@ void updateLeaderboard(char playerName[], int wins, int losses,
 void showLeaderboard();
 
 int comparePlayers(const void *a, const void *b);
+
+
+/* Tournament helper functions */
+
+int playTournamentMatch(char player1[], char player2[],
+                        int winningScore, FILE *history);
+
+int getWinnerFromMoves(int player1Move, int player2Move);
 
 
 /* ================= MAIN ================= */
@@ -128,13 +137,14 @@ int main() {
 
         printf("1. Play Game\n");
         printf("2. Two Player Mode\n");
-        printf("3. Statistics\n");
-        printf("4. Game History\n");
-        printf("5. Rules\n");
-        printf("6. Achievements\n");
-        printf("7. Leaderboard\n");
-        printf("8. Reset Statistics\n");
-        printf("9. Exit\n");
+        printf("3. Tournament Mode\n");
+        printf("4. Statistics\n");
+        printf("5. Game History\n");
+        printf("6. Rules\n");
+        printf("7. Achievements\n");
+        printf("8. Leaderboard\n");
+        printf("9. Reset Statistics\n");
+        printf("10. Exit\n");
 
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
@@ -165,6 +175,13 @@ int main() {
 
             case 3:
 
+                tournamentMode();
+
+                break;
+
+
+            case 4:
+
                 showStatistics(playerName,
                                wins,
                                losses,
@@ -177,21 +194,21 @@ int main() {
                 break;
 
 
-            case 4:
+            case 5:
 
                 showHistory();
 
                 break;
 
 
-            case 5:
+            case 6:
 
                 showRules();
 
                 break;
 
 
-            case 6:
+            case 7:
 
                 showAchievements(wins,
                                  currentStreak,
@@ -201,14 +218,14 @@ int main() {
                 break;
 
 
-            case 7:
+            case 8:
 
                 showLeaderboard();
 
                 break;
 
 
-            case 8:
+            case 9:
 
                 resetStatistics(&wins,
                                 &losses,
@@ -221,7 +238,7 @@ int main() {
                 break;
 
 
-            case 9:
+            case 10:
 
                 printf("\nThanks for playing, %s!\n",
                        playerName);
@@ -236,10 +253,10 @@ int main() {
 
             default:
 
-                printf("\nInvalid choice! Please choose 1-9.\n");
+                printf("\nInvalid choice! Please choose 1-10.\n");
         }
 
-    } while (choice != 9);
+    } while (choice != 10);
 
 
     return 0;
@@ -284,8 +301,6 @@ void playGame(char playerName[],
         printf("=================================\n");
 
 
-        /* ================= DIFFICULTY ================= */
-
         printf("\nChoose Difficulty:\n");
 
         printf("1. Easy\n");
@@ -316,8 +331,6 @@ void playGame(char playerName[],
         else
             printf("HARD\n");
 
-
-        /* ================= GAME MODE ================= */
 
         printf("\nChoose Game Mode:\n");
 
@@ -384,17 +397,13 @@ void playGame(char playerName[],
                 fprintf(history,
                         "Mode: Best of 5\n");
 
-
             fprintf(history,
                     "=================================\n");
         }
 
 
-        /* ================= GAME LOOP ================= */
-
         while (playerScore < winningScore &&
                computerScore < winningScore) {
-
 
             printf("\nChoose your option:\n");
 
@@ -441,8 +450,6 @@ void playGame(char playerName[],
                 printf("Scissors\n");
 
 
-            /* ================= RESULT ================= */
-
             if (player == computer) {
 
                 printf("Result: DRAW!\n");
@@ -486,8 +493,6 @@ void playGame(char playerName[],
         }
 
 
-        /* ================= MATCH RESULT ================= */
-
         (*totalMatches)++;
 
 
@@ -503,8 +508,6 @@ void playGame(char playerName[],
         printf("Computer: %d\n",
                computerScore);
 
-
-        /* ================= PLAYER WINS ================= */
 
         if (playerScore > computerScore) {
 
@@ -537,7 +540,6 @@ void playGame(char playerName[],
                 *level = newLevel;
 
                 printf("\nLEVEL UP!\n");
-
                 printf("You are now Level %d!\n",
                        *level);
             }
@@ -549,8 +551,6 @@ void playGame(char playerName[],
                         playerName);
         }
 
-
-        /* ================= PLAYER LOSES ================= */
 
         else {
 
@@ -681,19 +681,13 @@ void twoPlayerMode() {
         printf("=================================\n");
 
 
-        /* ================= PLAYER NAMES ================= */
-
         printf("\nEnter Player 1 name: ");
-
         scanf(" %49[^\n]", player1);
 
 
         printf("Enter Player 2 name: ");
-
         scanf(" %49[^\n]", player2);
 
-
-        /* ================= GAME MODE ================= */
 
         printf("\nChoose Game Mode:\n");
 
@@ -701,7 +695,6 @@ void twoPlayerMode() {
         printf("2. Best of 5\n");
 
         printf("Enter your choice: ");
-
         scanf("%d", &mode);
 
 
@@ -721,14 +714,11 @@ void twoPlayerMode() {
 
         else {
 
-            printf("\nInvalid choice!");
-            printf(" Starting Best of 3.\n");
+            printf("\nInvalid choice! Starting Best of 3.\n");
 
             winningScore = 2;
         }
 
-
-        /* ================= HISTORY ================= */
 
         FILE *history = fopen("game_history.txt", "a");
 
@@ -749,7 +739,6 @@ void twoPlayerMode() {
                     "Player 2: %s\n",
                     player2);
 
-
             if (winningScore == 2)
                 fprintf(history,
                         "Mode: Best of 3\n");
@@ -763,13 +752,8 @@ void twoPlayerMode() {
         }
 
 
-        /* ================= GAME LOOP ================= */
-
         while (player1Score < winningScore &&
                player2Score < winningScore) {
-
-
-            /* ================= PLAYER 1 ================= */
 
             printf("\n---------------------------------\n");
             printf("%s's Turn\n",
@@ -782,22 +766,20 @@ void twoPlayerMode() {
             printf("3. Scissors\n");
 
             printf("Enter your choice: ");
-
             scanf("%d", &player1Move);
 
 
             if (player1Move < 1 ||
                 player1Move > 3) {
 
-                printf("\nInvalid choice!");
+                printf("\nInvalid choice!\n");
 
                 continue;
             }
 
 
-            /* Hide Player 1's move */
-
             printf("\n\n\n\n\n\n\n\n\n\n");
+
 
             printf("---------------------------------\n");
             printf("%s's Turn\n",
@@ -810,20 +792,17 @@ void twoPlayerMode() {
             printf("3. Scissors\n");
 
             printf("Enter your choice: ");
-
             scanf("%d", &player2Move);
 
 
             if (player2Move < 1 ||
                 player2Move > 3) {
 
-                printf("\nInvalid choice!");
+                printf("\nInvalid choice!\n");
 
                 continue;
             }
 
-
-            /* ================= SHOW MOVES ================= */
 
             printf("\n=================================\n");
             printf("             ROUND\n");
@@ -856,9 +835,12 @@ void twoPlayerMode() {
                 printf("Scissors\n");
 
 
-            /* ================= RESULT ================= */
+            int winner =
+                getWinnerFromMoves(player1Move,
+                                   player2Move);
 
-            if (player1Move == player2Move) {
+
+            if (winner == 0) {
 
                 printf("\nResult: DRAW!\n");
 
@@ -868,20 +850,12 @@ void twoPlayerMode() {
             }
 
 
-            else if ((player1Move == 1 &&
-                      player2Move == 3) ||
-
-                     (player1Move == 2 &&
-                      player2Move == 1) ||
-
-                     (player1Move == 3 &&
-                      player2Move == 2)) {
+            else if (winner == 1) {
 
                 printf("\n%s WINS THE ROUND!\n",
                        player1);
 
                 player1Score++;
-
 
                 if (history != NULL)
                     fprintf(history,
@@ -896,7 +870,6 @@ void twoPlayerMode() {
                        player2);
 
                 player2Score++;
-
 
                 if (history != NULL)
                     fprintf(history,
@@ -917,8 +890,6 @@ void twoPlayerMode() {
         }
 
 
-        /* ================= FINAL RESULT ================= */
-
         printf("\n=================================\n");
         printf("         MATCH RESULT\n");
         printf("=================================\n");
@@ -938,7 +909,6 @@ void twoPlayerMode() {
             printf("\n🏆 %s WINS THE MATCH!\n",
                    player1);
 
-
             if (history != NULL)
                 fprintf(history,
                         "FINAL WINNER: %s\n",
@@ -949,7 +919,6 @@ void twoPlayerMode() {
 
             printf("\n🏆 %s WINS THE MATCH!\n",
                    player2);
-
 
             if (history != NULL)
                 fprintf(history,
@@ -976,13 +945,486 @@ void twoPlayerMode() {
 
         printf("\nTwo-player match saved to history.");
 
-
         printf("\n\nPlay another two-player match? (y/n): ");
 
         scanf(" %c", &again);
 
 
     } while (again == 'y' || again == 'Y');
+}
+
+
+/* ================================================= */
+/*                  TOURNAMENT MODE                  */
+/* ================================================= */
+
+void tournamentMode() {
+
+    char players[4][50];
+
+    char semifinal1Winner[50];
+    char semifinal2Winner[50];
+
+    char champion[50];
+
+    int i;
+
+    int winningScore;
+
+    int mode;
+
+    FILE *history;
+
+
+    printf("\n=================================\n");
+    printf("          TOURNAMENT MODE\n");
+    printf("=================================\n");
+
+
+    printf("\n4 players are required.\n");
+
+    printf("The tournament format is:\n");
+
+    printf("\nSemi-Final 1");
+    printf("\nSemi-Final 2");
+    printf("\n     ↓");
+    printf("\n   FINAL");
+    printf("\n     ↓");
+    printf("\n  CHAMPION\n");
+
+
+    /* ================= PLAYER REGISTRATION ================= */
+
+    for (i = 0; i < 4; i++) {
+
+        printf("\nEnter Player %d name: ",
+               i + 1);
+
+        scanf(" %49[^\n]",
+              players[i]);
+    }
+
+
+    /* ================= GAME MODE ================= */
+
+    printf("\nChoose Tournament Match Format:\n");
+
+    printf("1. Best of 3\n");
+    printf("2. Best of 5\n");
+
+    printf("Enter your choice: ");
+
+    scanf("%d", &mode);
+
+
+    if (mode == 1) {
+
+        winningScore = 2;
+    }
+
+    else if (mode == 2) {
+
+        winningScore = 3;
+    }
+
+    else {
+
+        printf("\nInvalid choice!");
+
+        printf(" Defaulting to Best of 3.\n");
+
+        winningScore = 2;
+    }
+
+
+    history = fopen("game_history.txt", "a");
+
+
+    if (history != NULL) {
+
+        fprintf(history,
+                "\n\n=================================\n");
+
+        fprintf(history,
+                "          TOURNAMENT\n");
+
+        fprintf(history,
+                "=================================\n");
+
+        fprintf(history,
+                "Player 1: %s\n",
+                players[0]);
+
+        fprintf(history,
+                "Player 2: %s\n",
+                players[1]);
+
+        fprintf(history,
+                "Player 3: %s\n",
+                players[2]);
+
+        fprintf(history,
+                "Player 4: %s\n",
+                players[3]);
+
+        fprintf(history,
+                "Format: %s\n",
+                winningScore == 2 ?
+                "Best of 3" :
+                "Best of 5");
+
+        fprintf(history,
+                "=================================\n");
+    }
+
+
+    /* ================= TOURNAMENT BRACKET ================= */
+
+    printf("\n=================================\n");
+    printf("          TOURNAMENT BRACKET\n");
+    printf("=================================\n");
+
+
+    printf("\nSemi-Final 1:");
+    printf("\n%s  VS  %s\n",
+           players[0],
+           players[1]);
+
+
+    printf("\nSemi-Final 2:");
+    printf("\n%s  VS  %s\n",
+           players[2],
+           players[3]);
+
+
+    /* ================= SEMI FINAL 1 ================= */
+
+    printf("\n\n=================================\n");
+    printf("          SEMI-FINAL 1\n");
+    printf("=================================\n");
+
+
+    strcpy(semifinal1Winner,
+           players[
+               playTournamentMatch(
+                   players[0],
+                   players[1],
+                   winningScore,
+                   history)
+           == 1 ? 0 : 1]);
+
+
+    printf("\n🏆 Semi-Final 1 Winner: %s\n",
+           semifinal1Winner);
+
+
+    /* ================= SEMI FINAL 2 ================= */
+
+    printf("\n\n=================================\n");
+    printf("          SEMI-FINAL 2\n");
+    printf("=================================\n");
+
+
+    strcpy(semifinal2Winner,
+           players[
+               playTournamentMatch(
+                   players[2],
+                   players[3],
+                   winningScore,
+                   history)
+           == 1 ? 0 : 1]);
+
+
+    printf("\n🏆 Semi-Final 2 Winner: %s\n",
+           semifinal2Winner);
+
+
+    /* ================= FINAL ================= */
+
+    printf("\n\n=================================\n");
+    printf("              FINAL\n");
+    printf("=================================\n");
+
+
+    printf("\n%s  VS  %s\n",
+           semifinal1Winner,
+           semifinal2Winner);
+
+
+    strcpy(champion,
+           playTournamentMatch(
+               semifinal1Winner,
+               semifinal2Winner,
+               winningScore,
+               history)
+           == 1 ?
+           semifinal1Winner :
+           semifinal2Winner);
+
+
+    /* ================= CHAMPION ================= */
+
+    printf("\n\n=================================\n");
+    printf("       🏆 TOURNAMENT CHAMPION\n");
+    printf("=================================\n");
+
+
+    printf("\n🏆🏆🏆 %s 🏆🏆🏆\n",
+           champion);
+
+    printf("\nCongratulations!\n");
+
+
+    if (history != NULL) {
+
+        fprintf(history,
+                "\nTOURNAMENT CHAMPION: %s\n",
+                champion);
+
+        fprintf(history,
+                "=================================\n");
+
+        fclose(history);
+    }
+
+
+    printf("\nTournament saved to game history.");
+
+    printf("\nPress Enter to return to menu...");
+
+    getchar();
+    getchar();
+}
+
+
+/* ================================================= */
+/*             TOURNAMENT MATCH                     */
+/* ================================================= */
+
+int playTournamentMatch(char player1[],
+                        char player2[],
+                        int winningScore,
+                        FILE *history) {
+
+    int player1Score = 0;
+    int player2Score = 0;
+
+    int player1Move;
+    int player2Move;
+
+    int winner;
+
+
+    printf("\n%s VS %s\n",
+           player1,
+           player2);
+
+
+    while (player1Score < winningScore &&
+           player2Score < winningScore) {
+
+
+        /* ================= PLAYER 1 ================= */
+
+        printf("\n---------------------------------\n");
+        printf("%s's Turn\n",
+               player1);
+
+        printf("---------------------------------\n");
+
+        printf("1. Stone\n");
+        printf("2. Paper\n");
+        printf("3. Scissors\n");
+
+        printf("Enter your choice: ");
+
+        scanf("%d", &player1Move);
+
+
+        if (player1Move < 1 ||
+            player1Move > 3) {
+
+            printf("\nInvalid choice! Try again.\n");
+
+            continue;
+        }
+
+
+        /* Hide first player's choice */
+
+        printf("\n\n\n\n\n\n\n\n\n\n");
+
+
+        /* ================= PLAYER 2 ================= */
+
+        printf("---------------------------------\n");
+        printf("%s's Turn\n",
+               player2);
+
+        printf("---------------------------------\n");
+
+        printf("1. Stone\n");
+        printf("2. Paper\n");
+        printf("3. Scissors\n");
+
+        printf("Enter your choice: ");
+
+        scanf("%d", &player2Move);
+
+
+        if (player2Move < 1 ||
+            player2Move > 3) {
+
+            printf("\nInvalid choice! Try again.\n");
+
+            continue;
+        }
+
+
+        /* ================= RESULT ================= */
+
+        printf("\n=================================\n");
+        printf("             ROUND\n");
+        printf("=================================\n");
+
+
+        printf("%s chose: ",
+               player1);
+
+        if (player1Move == 1)
+            printf("Stone\n");
+
+        else if (player1Move == 2)
+            printf("Paper\n");
+
+        else
+            printf("Scissors\n");
+
+
+        printf("%s chose: ",
+               player2);
+
+        if (player2Move == 1)
+            printf("Stone\n");
+
+        else if (player2Move == 2)
+            printf("Paper\n");
+
+        else
+            printf("Scissors\n");
+
+
+        winner =
+            getWinnerFromMoves(player1Move,
+                               player2Move);
+
+
+        if (winner == 0) {
+
+            printf("\nDRAW!\n");
+
+            if (history != NULL)
+                fprintf(history,
+                        "Tournament Round: DRAW\n");
+        }
+
+
+        else if (winner == 1) {
+
+            printf("\n%s wins the round!\n",
+                   player1);
+
+            player1Score++;
+
+            if (history != NULL)
+                fprintf(history,
+                        "Tournament Round Winner: %s\n",
+                        player1);
+        }
+
+
+        else {
+
+            printf("\n%s wins the round!\n",
+                   player2);
+
+            player2Score++;
+
+            if (history != NULL)
+                fprintf(history,
+                        "Tournament Round Winner: %s\n",
+                        player2);
+        }
+
+
+        printf("\nScore:\n");
+
+        printf("%s: %d\n",
+               player1,
+               player1Score);
+
+        printf("%s: %d\n",
+               player2,
+               player2Score);
+    }
+
+
+    printf("\n=================================\n");
+    printf("          MATCH WINNER\n");
+    printf("=================================\n");
+
+
+    if (player1Score > player2Score) {
+
+        printf("\n🏆 %s wins!\n",
+               player1);
+
+        if (history != NULL)
+            fprintf(history,
+                    "Tournament Match Winner: %s\n",
+                    player1);
+
+        return 1;
+    }
+
+
+    printf("\n🏆 %s wins!\n",
+           player2);
+
+    if (history != NULL)
+        fprintf(history,
+                "Tournament Match Winner: %s\n",
+                player2);
+
+    return 2;
+}
+
+
+/* ================================================= */
+/*             WINNER CALCULATION                    */
+/* ================================================= */
+
+int getWinnerFromMoves(int player1Move,
+                       int player2Move) {
+
+    if (player1Move == player2Move)
+        return 0;
+
+
+    if ((player1Move == 1 &&
+         player2Move == 3) ||
+
+        (player1Move == 2 &&
+         player2Move == 1) ||
+
+        (player1Move == 3 &&
+         player2Move == 2)) {
+
+        return 1;
+    }
+
+
+    return 2;
 }
 
 
@@ -1348,7 +1790,12 @@ void showRules() {
 
     printf("\nTWO PLAYER MODE:\n");
     printf("Player 1 competes against Player 2.\n");
-    printf("Both players choose their moves manually.\n");
+
+
+    printf("\nTOURNAMENT MODE:\n");
+    printf("4 players compete in a knockout tournament.\n");
+    printf("Two semi-finals lead to one final.\n");
+    printf("The final winner becomes the champion.\n");
 
 
     printf("\nLEADERBOARD:\n");
