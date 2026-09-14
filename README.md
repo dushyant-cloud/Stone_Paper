@@ -1,6 +1,6 @@
 # 🪨📄✂️ Stone Paper Scissors
 
-A beginner-friendly **Stone Paper Scissors game written in C**, progressively upgraded with game modes, player statistics, persistent data, game history, achievements, XP, levels, difficulty-based AI, a leaderboard system, and two-player gameplay.
+A beginner-friendly **Stone Paper Scissors game written in C**, progressively upgraded with multiple game modes, player statistics, persistent data, game history, achievements, XP, levels, difficulty-based AI, leaderboard rankings, two-player gameplay, and tournament mode.
 
 This project demonstrates practical C programming concepts through a complete console-based game.
 
@@ -20,22 +20,24 @@ This project demonstrates practical C programming concepts through a complete co
 
 ### 👤 Player System
 
-* Enter player name
+* Player name
 * Personalized game messages
-* Persistent player statistics
+* Persistent statistics
 
 ### 🏆 Game Modes
 
 * Best of 3
 * Best of 5
 * Play Again
-* **Two Player Mode**
+* Player vs Computer
+* Two Player Mode
+* **Tournament Mode**
 
-### 👥 Two Player Mode
+---
 
-Feature 15 adds local multiplayer gameplay.
+# 👥 Two Player Mode
 
-Two players can enter their names and compete against each other.
+Two players can compete locally on the same computer.
 
 Example:
 
@@ -44,7 +46,7 @@ Player 1: Dushyant
 Player 2: Rahul
 ```
 
-Both players independently select:
+Both players choose:
 
 ```text
 1. Stone
@@ -52,21 +54,82 @@ Both players independently select:
 3. Scissors
 ```
 
-The game then reveals both choices and determines the round winner.
+The program hides Player 1's selection before Player 2 chooses and then reveals both moves.
 
-### Two Player Game Modes
+### Available Formats
 
 * Best of 3
 * Best of 5
-* Draw detection
-* Round scoring
-* Final match winner
-* Match history
-* Play another match
+
+Two-player matches are automatically stored in the game history.
 
 ---
 
-## 🤖 Difficulty-Based Computer AI
+# 🏟️ Tournament Mode
+
+## Feature 16
+
+The project now includes a **4-player knockout tournament system**.
+
+Four players enter the tournament and compete through:
+
+```text
+Semi-Final 1
+      ↓
+Semi-Final 2
+      ↓
+    FINAL
+      ↓
+  CHAMPION
+```
+
+### Tournament Bracket
+
+```text
+Player 1 ───┐
+            ├── Winner ───┐
+Player 2 ───┘             │
+                          ├── 🏆 Champion
+Player 3 ───┐             │
+            ├── Winner ───┘
+Player 4 ───┘
+```
+
+### Tournament Features
+
+* 4 players
+* Two semi-finals
+* One final
+* Best of 3
+* Best of 5
+* Round scoring
+* Draw handling
+* Automatic advancement
+* Champion announcement
+* Tournament history
+* Match results saved to `game_history.txt`
+
+### Tournament Flow
+
+```text
+Register 4 Players
+        ↓
+Choose Best of 3 / Best of 5
+        ↓
+Semi-Final 1
+        ↓
+Semi-Final 2
+        ↓
+Final
+        ↓
+Tournament Champion
+```
+
+Tournament matches use the same Stone Paper Scissors rules as the normal game.
+
+---
+
+# 🤖 Difficulty-Based Computer AI
 
 The computer has three difficulty levels.
 
@@ -75,8 +138,6 @@ The computer has three difficulty levels.
 ```text
 100% Random
 ```
-
-The computer chooses Stone, Paper or Scissors randomly.
 
 ### Medium
 
@@ -108,7 +169,7 @@ getComputerMove(int player, int difficulty)
 
 ---
 
-## 📊 Statistics
+# 📊 Statistics
 
 The computer-game profile tracks:
 
@@ -119,7 +180,7 @@ The computer-game profile tracks:
 * Current Win Streak
 * Best Win Streak
 * XP
-* Player Level
+* Level
 
 Statistics are stored in:
 
@@ -129,44 +190,54 @@ stats.txt
 
 ---
 
-## 📜 Game History
+# 📜 Game History
 
-All matches are stored in:
+All game activity is stored in:
 
 ```text
 game_history.txt
 ```
 
-The history contains information about:
+The history can contain:
+
+### Computer Matches
 
 * Player name
 * Difficulty
 * Game mode
 * Round results
 * Final score
-* Current streak
 * XP
 * Level
+* Streak
 
-Two-player matches are also saved with:
+### Two Player Matches
 
-* Player 1 name
-* Player 2 name
+* Player 1
+* Player 2
 * Game mode
 * Round winners
 * Final winner
 * Final score
 
+### Tournament Matches
+
+* Tournament players
+* Tournament format
+* Semi-final results
+* Final result
+* Tournament champion
+
 ---
 
-## ⭐ XP & Level System
+# ⭐ XP & Level System
 
 ### XP Rewards
 
-| Event      |      XP |
-| ---------- | ------: |
-| Match Win  | +100 XP |
-| Match Loss |  -25 XP |
+| Event               |   XP |
+| ------------------- | ---: |
+| Computer Match Win  | +100 |
+| Computer Match Loss |  -25 |
 
 ### Level Formula
 
@@ -185,9 +256,9 @@ Example:
 
 ---
 
-## 🔥 Win Streak System
+# 🔥 Win Streak System
 
-The game tracks consecutive victories.
+The game tracks consecutive computer-game victories.
 
 It stores:
 
@@ -198,7 +269,7 @@ A loss resets the current streak.
 
 ---
 
-## 🏅 Achievements
+# 🏅 Achievements
 
 Available achievements:
 
@@ -208,6 +279,18 @@ Available achievements:
 * 🔥 10-Win Streak
 * ⭐ Level 5
 * ⭐ Level 10
+
+Achievements are displayed as:
+
+```text
+[UNLOCKED]
+```
+
+or:
+
+```text
+[LOCKED]
+```
 
 ---
 
@@ -238,11 +321,13 @@ The program uses:
 qsort()
 ```
 
-to rank players by XP.
+to sort players according to XP.
 
 ---
 
-## 🧠 C Structure Used for Leaderboard
+# 🧠 Data Structure
+
+Leaderboard players are represented using a C structure:
 
 ```c
 struct Player {
@@ -257,37 +342,7 @@ struct Player {
 
 ---
 
-## 👥 Two Player Architecture
-
-The Two Player Mode uses separate variables for both players:
-
-```text
-Player 1
-   ↓
-Choose Move
-   ↓
-Player 2
-   ↓
-Choose Move
-   ↓
-Compare Moves
-   ↓
-Round Winner
-   ↓
-Update Score
-   ↓
-Match Winner
-```
-
-The two-player mode is implemented using:
-
-```c
-twoPlayerMode()
-```
-
----
-
-## 🖥️ Main Menu
+# 🖥️ Main Menu
 
 The current main menu contains:
 
@@ -298,56 +353,55 @@ The current main menu contains:
 
 1. Play Game
 2. Two Player Mode
-3. Statistics
-4. Game History
-5. Rules
-6. Achievements
-7. Leaderboard
-8. Reset Statistics
-9. Exit
+3. Tournament Mode
+4. Statistics
+5. Game History
+6. Rules
+7. Achievements
+8. Leaderboard
+9. Reset Statistics
+10. Exit
 ```
 
 ---
 
-## 🔄 Complete Game Flow
+# 🔄 Complete Game Architecture
 
 ```text
-Start Program
-      ↓
-Enter Player Name
-      ↓
-Load Previous Statistics
-      ↓
-Main Menu
-      ↓
- ┌───────────────┬────────────────┐
- ↓               ↓
-Play Game     Two Player Mode
- ↓               ↓
-Difficulty     Player Names
- ↓               ↓
-Best of 3/5    Best of 3/5
- ↓               ↓
-Player Move    P1 + P2 Moves
- ↓               ↓
-Computer AI    Compare Moves
- ↓               ↓
-Round Result   Round Result
- ↓               ↓
-Match Result   Match Result
- ↓               ↓
-XP / Level     Save History
- ↓
-Streak
- ↓
+                    START
+                      ↓
+               Enter Player Name
+                      ↓
+             Load Saved Statistics
+                      ↓
+                  MAIN MENU
+                      ↓
+       ┌──────────────┼──────────────┐
+       ↓              ↓              ↓
+   Play Game      Two Player      Tournament
+       ↓              ↓              ↓
+   Difficulty      P1 vs P2       4 Players
+       ↓              ↓              ↓
+   Best of 3/5     Best of 3/5   Semi-Finals
+       ↓              ↓              ↓
+   Computer AI     Round Result      Final
+       ↓              ↓              ↓
+   Match Result    Match Winner     Champion
+       ↓
+   XP / Level
+       ↓
+    Streak
+       ↓
 Save Statistics
- ↓
+       ↓
 Update Leaderboard
+       ↓
+Game History
 ```
 
 ---
 
-## 📁 Project Structure
+# 📁 Project Structure
 
 ```text
 stpgame/
@@ -359,17 +413,17 @@ stpgame/
 └── leaderboard.txt
 ```
 
-| File               | Purpose                |
-| ------------------ | ---------------------- |
-| `stone_paper.c`    | Main C source code     |
-| `README.md`        | Project documentation  |
-| `stats.txt`        | Personal statistics    |
-| `game_history.txt` | Game and match history |
-| `leaderboard.txt`  | Top 10 leaderboard     |
+| File               | Purpose                     |
+| ------------------ | --------------------------- |
+| `stone_paper.c`    | Main C source code          |
+| `README.md`        | Project documentation       |
+| `stats.txt`        | Personal statistics         |
+| `game_history.txt` | Game and tournament history |
+| `leaderboard.txt`  | Top 10 leaderboard          |
 
 ---
 
-## ⚙️ Requirements
+# ⚙️ Requirements
 
 * C Compiler
 * GCC / MinGW / MSYS2
@@ -378,7 +432,7 @@ stpgame/
 
 ---
 
-## 🛠️ Compilation
+# 🛠️ Compilation
 
 Using GCC:
 
@@ -388,7 +442,7 @@ gcc stone_paper.c -o stone_paper.exe
 
 ---
 
-## ▶️ Run
+# ▶️ Run
 
 ### Windows PowerShell
 
@@ -404,14 +458,13 @@ gcc stone_paper.c -o stone_paper.exe
 
 ---
 
-## 📚 C Concepts Used
+# 📚 C Concepts Used
 
 This project demonstrates:
 
 * Variables
 * Data types
 * Operators
-* Conditional statements
 * `if-else`
 * `switch`
 * Loops
@@ -437,21 +490,21 @@ This project demonstrates:
 * Persistent data
 * Randomized algorithms
 * Basic AI logic
-* Multiplayer game logic
-* Progression systems
+* Multiplayer logic
+* Tournament algorithms
+* Game progression systems
 * Leaderboard algorithms
 
 ---
 
-## 🚀 Future Improvements
+# 🚀 Future Improvements
 
 Possible future features:
 
-* 🏟️ Tournament Mode
 * 📊 Advanced Statistics
 * 👤 Multiple Player Profiles
 * ⚙️ Game Settings
-* 🕒 Date & Time in Game History
+* 🕒 Date & Time in History
 * 🪙 Coins and Rewards
 * 🎨 Colored Console Interface
 * 🎵 Sound Effects
@@ -461,7 +514,7 @@ Possible future features:
 
 ---
 
-## 📈 Project Progress
+# 📈 Project Progress
 
 ```text
 Basic Gameplay
@@ -494,17 +547,19 @@ Smarter Computer AI
       ↓
 Leaderboard
       ↓
-👥 Two Player Mode
+Two Player Mode
+      ↓
+🏟️ Tournament Mode
 ```
 
-### Current Version
+## Current Version
 
-**Feature 15 — Two Player Mode**
+**Feature 16 — Tournament Mode**
 
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Dushyant Kumar**
 
-Built as a learning project to improve practical C programming, problem-solving, file handling, algorithms, AI logic, and software development skills.
+Built as a learning project to improve practical C programming, problem-solving, file handling, algorithms, AI logic, multiplayer systems, and software development skills.
